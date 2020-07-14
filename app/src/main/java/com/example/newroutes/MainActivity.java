@@ -2,6 +2,10 @@ package com.example.newroutes;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.content.Intent;
@@ -16,10 +20,13 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.newroutes.Fragments.MapFragment;
+import com.example.newroutes.Fragments.ProfileFragment;
 import com.example.newroutes.Fragments.RecentFragment;
 import com.example.newroutes.Fragments.RoutesFragment;
+import com.example.newroutes.Fragments.SavedRoutesFragment;
 import com.example.newroutes.databinding.ActivityMainBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationView;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
@@ -33,14 +40,9 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
 
     ActivityMainBinding binding;
-    Button btnMap;
-    Button btnRoutes;
-    Button btnRecent;
-    TextView tvUsername;
-    ImageView ivProfilePic;
-    FrameLayout flProfileFragments;
-    BottomNavigationView bottomNavigationView;
-    final FragmentManager fragmentManager = getSupportFragmentManager();
+    private DrawerLayout mDrawer;
+    private Toolbar toolbar;
+    private NavigationView nvDrawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,64 +51,74 @@ public class MainActivity extends AppCompatActivity {
         //Setting up View binding
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        //Defining variables from XML layout
-        btnMap = binding.btnMap;
-        btnRoutes = binding.btnRoutes;
-        btnRecent = binding.btnRecent;
-        tvUsername = binding.tvUsername;
-        ivProfilePic = binding.ivProfilePic;
-        flProfileFragments = binding.flProfileFragments;
-        bottomNavigationView = binding.bottomNavigation;
+        // This will display an Up icon (<-), we will replace it with hamburger later
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        //Fill with data
+        // Find our drawer view
+        mDrawer = binding.drawerLayout;
+        nvDrawer = binding.nvView;
+        // Setup drawer view
+        setupDrawerContent(nvDrawer);
+    }
+
+    private void setupDrawerContent(NavigationView navigationView) {
+        navigationView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        selectDrawerItem(menuItem);
+                        return true;
+                    }
+                });
+    }
+
+    public void selectDrawerItem(MenuItem menuItem) {
+        // Create a new fragment and specify the fragment to show based on nav item clicked
+        Fragment fragment = null;
+        Class fragmentClass;
+        switch(menuItem.getItemId()) {
+            case R.id.nav_profile:
+                fragmentClass = ProfileFragment.class;
+                break;
+            case R.id.nav_saved_routes:
+                fragmentClass = SavedRoutesFragment.class;
+                break;
+            case R.id.nav_recent:
+            default:
+                fragmentClass = RecentFragment.class;
+        }
+
         try {
-            ParseUser user = ParseUser.getCurrentUser().fetch(); //Lets us access custom parse fields
-            tvUsername.setText(user.getUsername());
-            Glide.with(this).load(user.getParseFile("Picture").getUrl()).into(ivProfilePic);
-        } catch (ParseException e) {
+            fragment = (Fragment) fragmentClass.newInstance();
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        //OnClickListeners
+        // Insert the fragment by replacing any existing fragment
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
 
-        btnMap.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                fragmentManager.beginTransaction().replace(flProfileFragments.getId(),new MapFragment()).commit();
-            }
-        });
+        // Highlight the selected item has been done by NavigationView
+        menuItem.setChecked(true);
+        // Set action bar title
+        setTitle(menuItem.getTitle());
+        // Close the navigation drawer
+        mDrawer.closeDrawers();
+    }
 
-        btnRoutes.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                fragmentManager.beginTransaction().replace(flProfileFragments.getId(),new RoutesFragment()).commit();
-            }
-        });
-
-        btnRecent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                fragmentManager.beginTransaction().replace(flProfileFragments.getId(),new RecentFragment()).commit();
-            }
-        });
-
-        //OnClick for Bottom Navigation View
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.itemAdd:
-                        Intent i = new Intent(MainActivity.this,NewRouteActivity.class);
-                        startActivity(i);
-                    case R.id.itemProfile:
-                    default:
-                }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // The action bar home/up action should open or close the drawer.
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                mDrawer.openDrawer(GravityCompat.START);
                 return true;
-            }
-        });
-        bottomNavigationView.setSelectedItemId(R.id.itemProfile);
+        }
 
+        return super.onOptionsItemSelected(item);
     }
 
 }

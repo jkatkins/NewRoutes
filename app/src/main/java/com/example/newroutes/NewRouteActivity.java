@@ -12,7 +12,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class NewRouteActivity extends AppCompatActivity {
 
-    BottomNavigationView bottomNavigationView;
     ActivityNewRouteBinding binding;
 
     @Override
@@ -24,23 +23,6 @@ public class NewRouteActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         //Define variables from XML
-        bottomNavigationView = binding.bottomNavigation;
 
-        //OnClickListeners
-
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.itemProfile:
-                        Intent i = new Intent(NewRouteActivity.this,MainActivity.class);
-                        startActivity(i);
-                    case R.id.itemAdd:
-                    default:
-                }
-                return true;
-            }
-        });
-        bottomNavigationView.setSelectedItemId(R.id.itemAdd);
     }
 }
