@@ -69,8 +69,7 @@ An app that randomly generates running routes using google maps or mapbox.
    * -> Timleine
 
 ## Wireframes
-[Add picture of your hand sketched wireframes in this section]
-<img src="YOUR_WIREFRAME_IMAGE_URL" width=600>
+https://imgur.com/a/1avxA8B
 
 ### [BONUS] Digital Wireframes & Mockups
 
