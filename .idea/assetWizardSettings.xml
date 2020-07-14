@@ -24,8 +24,8 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="/private/var/folders/g0/y91kl9px0g90n9mlct_nz2v80000gn/T/baseline_person_24.xml" />
-                                                <entry key="opacityPercent" value="60" />
+                                                <entry key="imagePath" value="/private/var/folders/g0/y91kl9px0g90n9mlct_nz2v80000gn/T/baseline_pin_drop_24.xml" />
+                                                <entry key="opacityPercent" value="80" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -36,7 +36,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="url" value="jar:file:/Applications/Android%20Studio.app/Contents/plugins/android/lib/android.jar!/images/material/icons/materialicons/person/baseline_person_24.xml" />
+                                                <entry key="url" value="jar:file:/Applications/Android%20Studio.app/Contents/plugins/android/lib/android.jar!/images/material/icons/materialicons/pin_drop/baseline_pin_drop_24.xml" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -68,7 +68,9 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="outputName" value="ic_profile" />
+                                      <entry key="outputName" value="ic_map_pin_basic" />
+                                      <entry key="theme" value="CUSTOM" />
+                                      <entry key="themeColor" value="ea0000" />
                                     </map>
                                   </option>
                                 </PersistentState>

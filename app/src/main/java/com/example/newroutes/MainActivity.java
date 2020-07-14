@@ -43,11 +43,11 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawer;
     private Toolbar toolbar;
     private NavigationView nvDrawer;
+    private FrameLayout flContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
         //Setting up View binding
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -60,8 +60,15 @@ public class MainActivity extends AppCompatActivity {
         // Find our drawer view
         mDrawer = binding.drawerLayout;
         nvDrawer = binding.nvView;
+        flContent = binding.flContent;
+
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_hamburger);
         // Setup drawer view
         setupDrawerContent(nvDrawer);
+        //Starts off by opening up the profile fragment
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(flContent.getId(), new ProfileFragment()).commit();
+        setTitle("Profile");
     }
 
     private void setupDrawerContent(NavigationView navigationView) {
@@ -78,33 +85,33 @@ public class MainActivity extends AppCompatActivity {
     public void selectDrawerItem(MenuItem menuItem) {
         // Create a new fragment and specify the fragment to show based on nav item clicked
         Fragment fragment = null;
-        Class fragmentClass;
+        Boolean replaceFragment = true;
         switch(menuItem.getItemId()) {
+            case R.id.nav_create:
+                replaceFragment = false;
+                Intent i = new Intent(MainActivity.this,CreateRouteActivity.class);
+                startActivity(i);
             case R.id.nav_profile:
-                fragmentClass = ProfileFragment.class;
+                fragment = new ProfileFragment();
                 break;
             case R.id.nav_saved_routes:
-                fragmentClass = SavedRoutesFragment.class;
+                fragment = new SavedRoutesFragment();
                 break;
             case R.id.nav_recent:
             default:
-                fragmentClass = RecentFragment.class;
+                fragment = new RecentFragment();
         }
-
-        try {
-            fragment = (Fragment) fragmentClass.newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         // Insert the fragment by replacing any existing fragment
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+        if (replaceFragment) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(flContent.getId(),fragment).commit();
 
-        // Highlight the selected item has been done by NavigationView
-        menuItem.setChecked(true);
-        // Set action bar title
-        setTitle(menuItem.getTitle());
+            // Highlight the selected item has been done by NavigationView
+            menuItem.setChecked(true);
+            // Set action bar title
+            setTitle(menuItem.getTitle());
+        }
+
         // Close the navigation drawer
         mDrawer.closeDrawers();
     }
