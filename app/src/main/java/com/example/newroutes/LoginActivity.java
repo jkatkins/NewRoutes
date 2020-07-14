@@ -20,6 +20,7 @@ public class LoginActivity extends AppCompatActivity {
     EditText etUsername;
     EditText etPassword;
     Button btnLogin;
+    Button btnSignup;
     ActivityLoginBinding binding;
 
     @Override
@@ -38,6 +39,7 @@ public class LoginActivity extends AppCompatActivity {
         etUsername = binding.etUsername;
         etPassword = binding.etPassword;
         btnLogin = binding.btnLogin;
+        btnSignup = binding.btnSignup;
 
         //On Click Listeners
         btnLogin.setOnClickListener(new View.OnClickListener() {
@@ -46,6 +48,14 @@ public class LoginActivity extends AppCompatActivity {
                 String username = etUsername.getText().toString();
                 String password = etPassword.getText().toString();
                 loginUser(username,password);
+            }
+        });
+
+        btnSignup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(LoginActivity.this,SignupActivity.class);
+                startActivity(i);
             }
         });
     }

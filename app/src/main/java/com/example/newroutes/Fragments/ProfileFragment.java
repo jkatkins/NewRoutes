@@ -63,8 +63,9 @@ public class ProfileFragment extends Fragment {
         flProfileFragments = binding.flProfileFragments;
 
         //Fill with data
-            ParseUser user = ParseUser.getCurrentUser(); //Lets us access custom parse fields
-            tvUsername.setText(user.getUsername());
-            Glide.with(this).load(user.getParseFile("Picture").getUrl()).into(ivProfilePic);
+        ParseUser user = null; //Lets us access custom parse fields
+        user = ParseUser.getCurrentUser();
+        tvUsername.setText(user.getUsername());
+        Glide.with(this).load(user.getParseFile("Picture").getUrl()).into(ivProfilePic);
     }
 }

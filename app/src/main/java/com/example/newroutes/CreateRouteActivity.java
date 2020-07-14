@@ -8,12 +8,16 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 import static com.mapbox.mapboxsdk.style.layers.Property.NONE;
 import static com.mapbox.mapboxsdk.style.layers.Property.VISIBLE;
@@ -38,10 +42,16 @@ import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
+import com.mapbox.mapboxsdk.plugins.annotation.Symbol;
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager;
+import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions;
 import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
+import com.mapbox.mapboxsdk.plugins.markerview.MarkerView;
+import com.mapbox.mapboxsdk.plugins.markerview.MarkerViewManager;
 import com.mapbox.mapboxsdk.style.layers.Layer;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
+import com.mapbox.mapboxsdk.utils.BitmapUtils;
 
 import java.util.List;
 
@@ -50,12 +60,14 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.visibility;
 public class CreateRouteActivity extends AppCompatActivity implements OnMapReadyCallback, PermissionsListener {
 
     public static final String TAG = "CreateRouteActivity";
+    private static final String ID_ICON = "placeholder";
     private MapView mapView;
     private MapboxMap map;
     private Button btnStart;
     private ImageView hoveringMarker;
+    private SymbolManager symbolManager;
+    private Symbol symbol2;
     private PermissionsManager permissionsManager;
-    private Marker destinationMarker;
     private static final String DROPPED_MARKER_LAYER_ID = "DROPPED_MARKER_LAYER_ID";
     ActivityCreateRouteBinding binding;
 
@@ -96,12 +108,22 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                         hoveringMarker.setLayoutParams(params);
                         mapView.addView(hoveringMarker);
 
+                        symbolManager = new SymbolManager(mapView, map, style);
+                        symbolManager.setIconAllowOverlap(true);
+                        symbolManager.setTextAllowOverlap(true);
+
+                        style.addImage(ID_ICON, BitmapUtils.getBitmapFromDrawable(getResources().getDrawable(R.drawable.mapbox_marker_icon_default)));
+
                         btnStart.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 final LatLng mapTargetLatLng = map.getCameraPosition().target;
-                                hoveringMarker.setVisibility(View.INVISIBLE);
-
+                                Log.i(TAG,"symbol placing");
+                                Symbol symbol = symbolManager.create(new
+                                        SymbolOptions()
+                                        .withLatLng(mapTargetLatLng)
+                                        .withIconImage(ID_ICON)
+                                        .withIconSize(1.0f));
                             }
                         });
                     }

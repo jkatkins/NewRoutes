@@ -89,8 +89,15 @@ public class MainActivity extends AppCompatActivity {
         switch(menuItem.getItemId()) {
             case R.id.nav_create:
                 replaceFragment = false;
-                Intent i = new Intent(MainActivity.this,CreateRouteActivity.class);
-                startActivity(i);
+                Intent createIntent = new Intent(MainActivity.this,CreateRouteActivity.class);
+                startActivity(createIntent);
+                break;
+            case R.id.nav_logout:
+                replaceFragment = false;
+                ParseUser.logOutInBackground();
+                Intent logoutIntent = new Intent(MainActivity.this,LoginActivity.class);
+                startActivity(logoutIntent);
+                break;
             case R.id.nav_profile:
                 fragment = new ProfileFragment();
                 break;
