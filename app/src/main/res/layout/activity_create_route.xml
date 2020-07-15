@@ -25,7 +25,7 @@
         android:layout_marginBottom="24dp"
         android:background="@color/design_default_color_primary_dark"
         android:enabled="true"
-        android:text="Start Navigating"
+        android:text="Choose your origin"
         android:textColor="@android:color/secondary_text_light_nodisable"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
