@@ -3,4 +3,9 @@
     <string name="mapbox_access_token">pk.eyJ1IjoiamthdGtpbnMiLCJhIjoiY2tja3c0ZDZyMXRtdTJ6bnFsNjl6ODAxdyJ9.Xfr5O3OVyFUI6L6dwVcbsg</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="picture_failed">Failed to take picture!</string>
+    <string name="login_error">Try again</string>
+    <string name="empty_username">Username can\'t be emtpy</string>
+    <string name="empty_password">Password can\'t be empty</string>
+    <string name="passowrd_mismatch">Passwords don\'t match</string>
 </resources>

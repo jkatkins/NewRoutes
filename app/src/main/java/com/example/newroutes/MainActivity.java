@@ -1,6 +1,5 @@
 package com.example.newroutes;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -10,32 +9,15 @@ import androidx.fragment.app.FragmentManager;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.example.newroutes.Fragments.MapFragment;
 import com.example.newroutes.Fragments.ProfileFragment;
 import com.example.newroutes.Fragments.RecentFragment;
-import com.example.newroutes.Fragments.RoutesFragment;
 import com.example.newroutes.Fragments.SavedRoutesFragment;
 import com.example.newroutes.databinding.ActivityMainBinding;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
-import com.mapbox.mapboxsdk.Mapbox;
-import com.mapbox.mapboxsdk.maps.MapView;
-import com.mapbox.mapboxsdk.maps.MapboxMap;
-import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
-import com.mapbox.mapboxsdk.maps.Style;
-import com.parse.ParseException;
 import com.parse.ParseUser;
-
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -94,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.nav_logout:
                 replaceFragment = false;
-                ParseUser.logOutInBackground();
+                ParseUser.logOut();
                 Intent logoutIntent = new Intent(MainActivity.this,LoginActivity.class);
                 startActivity(logoutIntent);
                 break;

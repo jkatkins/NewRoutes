@@ -130,7 +130,7 @@ public class ProfileFragment extends Fragment {
                 ParseUser.getCurrentUser().put("Picture",imageParseFile);
                 ParseUser.getCurrentUser().saveInBackground();
             } else { // Result was a failure
-                Toast.makeText(getContext(), "Picture wasn't taken!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.picture_failed, Toast.LENGTH_SHORT).show();
             }
         }
     }

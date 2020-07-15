@@ -131,7 +131,6 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                     @Override
                     public void onStyleLoaded(@NonNull final Style style) {
                         enableLocationComponent(style);
-                        Toast.makeText(CreateRouteActivity.this, "move map instructions", Toast.LENGTH_SHORT).show();
                         // When user is still picking a location, we hover a marker above the mapboxMap in the center.
 // This is done by using an image view with the default marker found in the SDK. You can
 // swap out for your own marker image, just make sure it matches up with the dropped marker.
@@ -239,14 +238,7 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
             btnStart.setText("Generate Route");
             hoveringMarker.setVisibility(View.INVISIBLE);
         } else {
-            Point origin = symbol1.getGeometry();
-            Point destination = symbol2.getGeometry();
             loadedMapStyle.addSource(new GeoJsonSource(ROUTE_SOURCE_ID));
-
-            GeoJsonSource iconGeoJsonSource = new GeoJsonSource(ICON_SOURCE_ID, FeatureCollection.fromFeatures(new Feature[] {
-                    Feature.fromGeometry(Point.fromLngLat(origin.longitude(), origin.latitude())),
-                    Feature.fromGeometry(Point.fromLngLat(destination.longitude(), destination.latitude()))}));
-            loadedMapStyle.addSource(iconGeoJsonSource);
             initLayers(loadedMapStyle);
             getRoute(map,symbol1.getGeometry(),symbol2.getGeometry());
         }
