@@ -3,13 +3,10 @@ package com.example.newroutes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -18,41 +15,26 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
-import static com.mapbox.mapboxsdk.style.layers.Property.NONE;
-import static com.mapbox.mapboxsdk.style.layers.Property.VISIBLE;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconIgnorePlacement;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineCap;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.visibility;
 
 import static com.mapbox.core.constants.Constants.PRECISION_6;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconIgnorePlacement;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconOffset;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineCap;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineColor;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineJoin;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineWidth;
 
 
 import com.example.newroutes.databinding.ActivityCreateRouteBinding;
-import com.mapbox.android.core.location.LocationEngine;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.api.directions.v5.DirectionsCriteria;
 import com.mapbox.api.directions.v5.MapboxDirections;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
-import com.mapbox.geojson.Feature;
-import com.mapbox.geojson.FeatureCollection;
+
 import com.mapbox.geojson.LineString;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
-import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.location.LocationComponent;
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
@@ -65,15 +47,11 @@ import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.plugins.annotation.Symbol;
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager;
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions;
-import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
-import com.mapbox.mapboxsdk.plugins.markerview.MarkerView;
-import com.mapbox.mapboxsdk.plugins.markerview.MarkerViewManager;
-import com.mapbox.mapboxsdk.style.layers.Layer;
 import com.mapbox.mapboxsdk.style.layers.LineLayer;
 import com.mapbox.mapboxsdk.style.layers.Property;
-import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.mapboxsdk.utils.BitmapUtils;
+import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -81,8 +59,6 @@ import retrofit2.Response;
 import timber.log.Timber;
 
 import java.util.List;
-
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.visibility;
 
 public class CreateRouteActivity extends AppCompatActivity implements OnMapReadyCallback, PermissionsListener {
 
@@ -146,6 +122,8 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                         symbolManager.setIconAllowOverlap(true);
                         symbolManager.setTextAllowOverlap(true);
 
+                        initLayers(style);
+
                         style.addImage(ID_ICON, BitmapUtils.getBitmapFromDrawable(getResources().getDrawable(R.drawable.mapbox_marker_icon_default)));
 
                         btnStart.setOnClickListener(new View.OnClickListener() {
@@ -153,7 +131,8 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                             public void onClick(View view) {
                                 final LatLng mapTargetLatLng = map.getCameraPosition().target;
                                 //dropPin(mapTargetLatLng);
-                                createRoute(mapTargetLatLng,map,style);
+                                //createRoute(mapTargetLatLng,map,style);
+                                routeFromRandStart(mapTargetLatLng,map,style);
                             }
                         });
                     }
@@ -189,9 +168,10 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                 Timber.d("Response code: " + response.code());
                 if (response.body() == null) {
                     Timber.e("No routes found, make sure you set the right user and access token.");
+                    Log.e(TAG,"No routes found, make sure you set the right user and access token.");
                     return;
                 } else if (response.body().routes().size() < 1) {
-                    Timber.e("No routes found");
+                    Log.e(TAG,"No routes found");
                     return;
                 }
 
@@ -221,6 +201,7 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
 
             @Override
             public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
+                Log.e(TAG,"Error");
                 Timber.e("Error: " + throwable.getMessage());
                 Toast.makeText(CreateRouteActivity.this, "Error: " + throwable.getMessage(),
                         Toast.LENGTH_SHORT).show();
@@ -228,8 +209,24 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
         });
     }
 
+    private void routeFromRandStart(LatLng targetLatLng,MapboxMap map,Style loadedMapStyle) {
+        if (loadedMapStyle.getSourceAs(ROUTE_SOURCE_ID) == null) {
+            loadedMapStyle.addSource(new GeoJsonSource(ROUTE_SOURCE_ID));
+        }
+        if (symbol1 != null) {
+            symbolManager.delete(symbol1);
+            symbolManager.delete(symbol2);
+        }
+        symbol1 = dropPin(targetLatLng);
+        symbol2 = randFromPoint(symbol1.getGeometry(),1);
+        getRoute(map,symbol1.getGeometry(),symbol2.getGeometry());
+    }
+
 
     private void createRoute(LatLng targetLatLng,MapboxMap map,Style loadedMapStyle) {
+        if (symbol1 != null){
+            randFromPoint(symbol1.getGeometry(),1);
+        }
         if (symbol1 == null) {
             symbol1 = dropPin(targetLatLng);
             btnStart.setText("Choose a destination");
@@ -253,6 +250,14 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                 .withIconImage(ID_ICON)
                 .withIconSize(1.0f));
         return symbol;
+    }
+
+    private Symbol randFromPoint(Point origin, double distance) {
+        double degrees = Math.random() * 360;
+        distance = distance/69; //conversion from miles to lat/lng
+        LatLng newPoint = new LatLng(origin.latitude() + distance * Math.sin(degrees),
+                origin.longitude() + distance * Math.cos(degrees));
+        return dropPin(newPoint);
     }
 
 
@@ -289,7 +294,7 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
 
     @Override
     public void onExplanationNeeded(List<String> permissionsToExplain) {
-        Toast.makeText(this, "R.string.user_location_permission_explanation", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, R.string.user_location_permission_explanation, Toast.LENGTH_LONG).show();
     }
 
     @Override
