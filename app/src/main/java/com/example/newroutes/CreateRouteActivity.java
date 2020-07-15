@@ -32,6 +32,10 @@ import com.mapbox.api.directions.v5.MapboxDirections;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
 
+import com.mapbox.api.geocoding.v5.GeocodingCriteria;
+import com.mapbox.api.geocoding.v5.MapboxGeocoding;
+import com.mapbox.api.geocoding.v5.models.CarmenFeature;
+import com.mapbox.api.geocoding.v5.models.GeocodingResponse;
 import com.mapbox.geojson.LineString;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
@@ -79,6 +83,7 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
     private PermissionsManager permissionsManager;
     private DirectionsRoute currentRoute;
     private MapboxDirections client;
+    private MapboxGeocoding geoClient;
     private static final String DROPPED_MARKER_LAYER_ID = "DROPPED_MARKER_LAYER_ID";
     ActivityCreateRouteBinding binding;
 
@@ -222,6 +227,41 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
         getRoute(map,symbol1.getGeometry(),symbol2.getGeometry());
     }
 
+    private void checkPoint(Point point) {
+        MapboxGeocoding reverseGeocode = MapboxGeocoding.builder()
+                .accessToken(getString(R.string.mapbox_access_token))
+                .query(point)
+                .geocodingTypes(GeocodingCriteria.TYPE_NEIGHBORHOOD)
+                //.bbox(point.latitude(),point.longitude(),point.latitude(),point.longitude())
+                .build();
+
+        reverseGeocode.enqueueCall(new Callback<GeocodingResponse>() {
+            @Override
+            public void onResponse(Call<GeocodingResponse> call, Response<GeocodingResponse> response) {
+
+                List<CarmenFeature> results = response.body().features();
+
+                if (results.size() > 0) {
+
+                    // Log the first results Point.
+                    Point firstResultPoint = results.get(0).center();
+                    Log.d(TAG, "onResponse: " + firstResultPoint.toString());
+
+                } else {
+
+                    // No result for your request were found.
+                    Log.d(TAG, "onResponse: No result found");
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GeocodingResponse> call, Throwable throwable) {
+                throwable.printStackTrace();
+            }
+        });
+    }
+
 
     private void createRoute(LatLng targetLatLng,MapboxMap map,Style loadedMapStyle) {
         if (symbol1 != null){
@@ -257,7 +297,9 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
         distance = distance/69; //conversion from miles to lat/lng
         LatLng newPoint = new LatLng(origin.latitude() + distance * Math.sin(degrees),
                 origin.longitude() + distance * Math.cos(degrees));
+        checkPoint(origin);
         return dropPin(newPoint);
+
     }
 
 
