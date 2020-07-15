@@ -48,18 +48,15 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     private void createAccount(String username, String password, String confirmPassword) {
-        if (username.isEmpty()) {
-            Toast.makeText(this, "Username can't be empty", Toast.LENGTH_SHORT).show();
-        }
         //TODO add case for duplicate username
         //TODO add password requirements
-        else if (password.isEmpty()) {
+        if (username.isEmpty()) {
+            Toast.makeText(this, "Username can't be empty", Toast.LENGTH_SHORT).show();
+        } else if (password.isEmpty()) {
             Toast.makeText(this, "Password can't be empty", Toast.LENGTH_SHORT).show();
-        }
-        else if (!(password.equals(confirmPassword))) {
+        } else if (!(password.equals(confirmPassword))) {
             Toast.makeText(this, "Passwords don't match", Toast.LENGTH_SHORT).show();
-        }
-        else {
+        } else {
             ParseUser user = new ParseUser();
             // Set core properties
             user.setUsername(username);
