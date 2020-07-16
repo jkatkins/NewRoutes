@@ -89,7 +89,7 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
     private MapboxDirections client;
     private MapboxGeocoding geoClient;
     int numPoints;
-    int targetNumPoints = 3;
+    int targetNumPoints = 2;
     ArrayList<Point> points = new ArrayList<>();
     private static final String DROPPED_MARKER_LAYER_ID = "DROPPED_MARKER_LAYER_ID";
     ActivityCreateRouteBinding binding;
@@ -164,6 +164,7 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                                     symbolManager.delete(symbol2);
                                     symbol1 = null;
                                     symbol2 = null;
+                                    points.clear();
                                     hoveringMarker.setVisibility(View.VISIBLE);
                                 } else if (numPoints > 0) { //Start has been validated, distance is invalid
                                     generateMore(map,style);
@@ -224,8 +225,8 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                 currentRoute = response.body().routes().get(0);
 
 // Make a toast which displays the route's distance
-                Toast.makeText(CreateRouteActivity.this, (currentRoute.distance()).toString(), Toast.LENGTH_SHORT).show();
-
+                Toast.makeText(CreateRouteActivity.this, (Double.toString(currentRoute.distance()*0.000621371)), Toast.LENGTH_SHORT).show();
+                //0.000621371 is conversion from meters to miles
                 if (mapboxMap != null) {
                     mapboxMap.getStyle(new Style.OnStyleLoaded() {
                         @Override
@@ -265,11 +266,11 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
             btnStart.setText(R.string.reset);
             return;
         }
-        if (etDistance.getText().toString().isEmpty() || Integer.parseInt(etDistance.getText().toString())<=0){
+        if (etDistance.getText().toString().isEmpty() || Double.parseDouble(etDistance.getText().toString())<=0){
             Toast.makeText(this, "Enter a valid distance", Toast.LENGTH_SHORT).show();
             return;
         }
-        symbol2 = randFromPoint(symbol1.getGeometry(),Integer.parseInt(etDistance.getText().toString()));
+        symbol2 = randFromPoint(symbol1.getGeometry(),Double.parseDouble(etDistance.getText().toString()));
         checkPoint(symbol2.getGeometry(),loadedMapStyle);
     }
 
@@ -329,7 +330,7 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
         double degrees = Math.random() * 360;
         distance = distance/69; //conversion from miles to lat/lng
         LatLng newPoint = new LatLng(origin.latitude() + distance * Math.sin(degrees),
-                origin.longitude() + distance * Math.cos(degrees));
+                origin.longitude() + distance * Math.cos(degrees) * Math.cos(Math.toRadians(origin.latitude())));
         return dropPin(newPoint);
 
     }
