@@ -64,6 +64,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CreateRouteActivity extends AppCompatActivity implements OnMapReadyCallback, PermissionsListener {
@@ -88,7 +89,8 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
     private MapboxDirections client;
     private MapboxGeocoding geoClient;
     int numPoints;
-    int targetNumPoints = 2;
+    int targetNumPoints = 3;
+    ArrayList<Point> points = new ArrayList<>();
     private static final String DROPPED_MARKER_LAYER_ID = "DROPPED_MARKER_LAYER_ID";
     ActivityCreateRouteBinding binding;
 
@@ -192,13 +194,17 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
     }
 
     private void getRoute(final MapboxMap mapboxMap, Point origin, Point destination) {
-        client = MapboxDirections.builder()
+        MapboxDirections.Builder builder = MapboxDirections.builder()
                 .origin(origin)
-                .destination(destination)
+                .destination(origin)
                 .overview(DirectionsCriteria.OVERVIEW_FULL)
                 .profile(DirectionsCriteria.PROFILE_WALKING)
-                .accessToken(getString(R.string.mapbox_access_token))
-                .build();
+                .accessToken(getString(R.string.mapbox_access_token));
+
+        for (Point waypoint : points) {
+            builder.addWaypoint(waypoint);
+        }
+        client = builder.build();
 
         client.enqueueCall(new Callback<DirectionsResponse>() {
             @Override
@@ -271,7 +277,7 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
         MapboxGeocoding reverseGeocode = MapboxGeocoding.builder()
                 .accessToken(getString(R.string.mapbox_access_token))
                 .query(point)
-                .geocodingTypes(GeocodingCriteria.TYPE_NEIGHBORHOOD)
+                .geocodingTypes(GeocodingCriteria.TYPE_ADDRESS)
                 .build();
         reverseGeocode.enqueueCall(new Callback<GeocodingResponse>() {
             @Override
@@ -279,9 +285,12 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                 List<CarmenFeature> results = response.body().features();
                 if (results.size() > 0) {
                     // Log the first results Point.
-                    numPoints++;
+                    if (numPoints >0) {
+                        points.add(point);
+                    }
                     Point firstResultPoint = results.get(0).center();
                     Log.d(TAG, "onResponse: " + firstResultPoint.toString());
+                    numPoints++;
                     generateMore(map,style);
                 } else {
                     // No result for your request were found.
