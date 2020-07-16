@@ -88,9 +88,12 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
     private EditText etDistance;
     private MapboxDirections client;
     private MapboxGeocoding geoClient;
-    int numPoints;
-    int targetNumPoints = 2;
-    ArrayList<Point> points = new ArrayList<>();
+    private int numPoints;
+    private LatLng center;
+    private Double radius;
+    private int targetNumPoints = 4;
+    private double angle;
+    private ArrayList<Point> points = new ArrayList<>();
     private static final String DROPPED_MARKER_LAYER_ID = "DROPPED_MARKER_LAYER_ID";
     ActivityCreateRouteBinding binding;
 
@@ -168,7 +171,9 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                                     hoveringMarker.setVisibility(View.VISIBLE);
                                 } else if (numPoints > 0) { //Start has been validated, distance is invalid
                                     generateMore(map,style);
-                                } else { //User's second click on button
+                                } else if (etDistance.getText().toString().isEmpty() || Double.parseDouble(etDistance.getText().toString())<=0){ //Generate click
+                                    Toast.makeText(CreateRouteActivity.this, "Enter a valid distance", Toast.LENGTH_SHORT).show();
+                                } else { //generate with valid distance
                                     checkPoint(symbol1.getGeometry(),style);
                                 }
                             }
@@ -266,11 +271,7 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
             btnStart.setText(R.string.reset);
             return;
         }
-        if (etDistance.getText().toString().isEmpty() || Double.parseDouble(etDistance.getText().toString())<=0){
-            Toast.makeText(this, "Enter a valid distance", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        symbol2 = randFromPoint(symbol1.getGeometry(),Double.parseDouble(etDistance.getText().toString()));
+        symbol2 = randFromCenter();
         checkPoint(symbol2.getGeometry(),loadedMapStyle);
     }
 
@@ -278,7 +279,7 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
         MapboxGeocoding reverseGeocode = MapboxGeocoding.builder()
                 .accessToken(getString(R.string.mapbox_access_token))
                 .query(point)
-                .geocodingTypes(GeocodingCriteria.TYPE_ADDRESS)
+                .geocodingTypes(GeocodingCriteria.TYPE_POSTCODE)
                 .build();
         reverseGeocode.enqueueCall(new Callback<GeocodingResponse>() {
             @Override
@@ -288,6 +289,10 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                     // Log the first results Point.
                     if (numPoints >0) {
                         points.add(point);
+                    } else {
+                        radius = Double.parseDouble(etDistance.getText().toString())/(2 * Math.PI);
+                        radius = radius/69;
+                        generateCenter(symbol1.getGeometry());
                     }
                     Point firstResultPoint = results.get(0).center();
                     Log.d(TAG, "onResponse: " + firstResultPoint.toString());
@@ -326,11 +331,21 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
         return symbol;
     }
 
-    private Symbol randFromPoint(Point origin, double distance) {
+    private void generateCenter(Point origin) {
         double degrees = Math.random() * 360;
-        distance = distance/69; //conversion from miles to lat/lng
-        LatLng newPoint = new LatLng(origin.latitude() + distance * Math.sin(degrees),
-                origin.longitude() + distance * Math.cos(degrees) * Math.cos(Math.toRadians(origin.latitude())));
+        angle = (degrees + 180) % 360;
+        LatLng newPoint = new LatLng(origin.latitude() + radius * Math.sin(degrees),
+                origin.longitude() + radius * Math.cos(degrees) * Math.cos(Math.toRadians(origin.latitude())));
+        center = newPoint;
+        Symbol centerPin = dropPin(newPoint);
+        centerPin.setIconSize(2f);
+    }
+
+    private Symbol randFromCenter() {
+        double degrees = (angle + (360/(targetNumPoints-1))) % 360;
+        angle = degrees;
+        LatLng newPoint = new LatLng(center.getLatitude() + radius * Math.cos(degrees),
+                center.getLongitude() + radius* Math.sin(degrees));
         return dropPin(newPoint);
 
     }
