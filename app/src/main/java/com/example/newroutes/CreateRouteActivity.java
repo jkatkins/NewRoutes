@@ -335,7 +335,7 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
         double degrees = Math.random() * 360;
         angle = (degrees + 180) % 360;
         LatLng newPoint = new LatLng(origin.latitude() + radius * Math.sin(degrees),
-                origin.longitude() + radius * Math.cos(degrees) * Math.cos(Math.toRadians(origin.latitude())));
+                origin.longitude() + radius * Math.cos(degrees));
         center = newPoint;
         Symbol centerPin = dropPin(newPoint);
         centerPin.setIconSize(2f);
@@ -344,8 +344,8 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
     private Symbol randFromCenter() {
         double degrees = (angle + (360/(targetNumPoints-1))) % 360;
         angle = degrees;
-        LatLng newPoint = new LatLng(center.getLatitude() + radius * Math.cos(degrees),
-                center.getLongitude() + radius* Math.sin(degrees));
+        LatLng newPoint = new LatLng(center.getLatitude() + radius * Math.sin(Math.toRadians(degrees)),
+                center.getLongitude() + radius* Math.cos(Math.toRadians(degrees)));
         return dropPin(newPoint);
 
     }
