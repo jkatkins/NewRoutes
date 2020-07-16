@@ -2,6 +2,7 @@ package com.example.newroutes;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -10,10 +11,10 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 
 
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineCap;
@@ -83,6 +84,7 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
     private Symbol symbol2 = null;
     private PermissionsManager permissionsManager;
     private DirectionsRoute currentRoute;
+    private EditText etDistance;
     private MapboxDirections client;
     private MapboxGeocoding geoClient;
     int numPoints;
@@ -100,7 +102,13 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
         binding = ActivityCreateRouteBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        Toolbar toolbar = binding.toolbar;
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         btnStart = binding.btnStart;
+        etDistance = binding.etDistance;
         mapView = binding.mapView;
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
@@ -148,11 +156,15 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                                 } else if (numPoints == targetNumPoints) { //reset route
                                     numPoints = 0;
                                     btnStart.setText(R.string.choose_origin);
+                                    GeoJsonSource source = style.getSourceAs(ROUTE_SOURCE_ID);
+                                    source.setGeoJson(symbol1.getGeometry());
                                     symbolManager.delete(symbol1);
                                     symbolManager.delete(symbol2);
                                     symbol1 = null;
                                     symbol2 = null;
                                     hoveringMarker.setVisibility(View.VISIBLE);
+                                } else if (numPoints > 0) { //Start has been validated, distance is invalid
+                                    generateMore(map,style);
                                 } else { //User's second click on button
                                     checkPoint(symbol1.getGeometry(),style);
                                 }
@@ -222,7 +234,6 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                             if (source != null) {
                                 LineString drawnRoute = LineString.fromPolyline(currentRoute.geometry(), PRECISION_6);
                                 source.setGeoJson(drawnRoute);
-                                source.setGeoJson(symbol1.getGeometry());
                             }
                         }
                     });
@@ -248,7 +259,11 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
             btnStart.setText(R.string.reset);
             return;
         }
-        symbol2 = randFromPoint(symbol1.getGeometry(),1);
+        if (etDistance.getText().toString().isEmpty() || Integer.parseInt(etDistance.getText().toString())<=0){
+            Toast.makeText(this, "Enter a valid distance", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        symbol2 = randFromPoint(symbol1.getGeometry(),Integer.parseInt(etDistance.getText().toString()));
         checkPoint(symbol2.getGeometry(),loadedMapStyle);
     }
 
@@ -362,6 +377,12 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
         }
     }
 
+    //back button
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
 
     //lifecycle methods for the map
     @Override
