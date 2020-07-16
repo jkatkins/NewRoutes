@@ -36,6 +36,7 @@ import com.mapbox.api.geocoding.v5.GeocodingCriteria;
 import com.mapbox.api.geocoding.v5.MapboxGeocoding;
 import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.api.geocoding.v5.models.GeocodingResponse;
+import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.LineString;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
@@ -84,6 +85,8 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
     private DirectionsRoute currentRoute;
     private MapboxDirections client;
     private MapboxGeocoding geoClient;
+    int numPoints;
+    int targetNumPoints = 2;
     private static final String DROPPED_MARKER_LAYER_ID = "DROPPED_MARKER_LAYER_ID";
     ActivityCreateRouteBinding binding;
 
@@ -137,7 +140,22 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                                 final LatLng mapTargetLatLng = map.getCameraPosition().target;
                                 //dropPin(mapTargetLatLng);
                                 //createRoute(mapTargetLatLng,map,style);
-                                routeFromRandStart(mapTargetLatLng,map,style);
+                                //routeFromRandStart(mapTargetLatLng,map,style);
+                                if (symbol1 == null) { //User's first click on button
+                                    symbol1 = dropPin(mapTargetLatLng);
+                                    btnStart.setText(R.string.generate_route);
+                                    hoveringMarker.setVisibility(View.INVISIBLE);
+                                } else if (numPoints == targetNumPoints) { //reset route
+                                    numPoints = 0;
+                                    btnStart.setText(R.string.choose_origin);
+                                    symbolManager.delete(symbol1);
+                                    symbolManager.delete(symbol2);
+                                    symbol1 = null;
+                                    symbol2 = null;
+                                    hoveringMarker.setVisibility(View.VISIBLE);
+                                } else { //User's second click on button
+                                    checkPoint(symbol1.getGeometry(),style);
+                                }
                             }
                         });
                     }
@@ -155,6 +173,10 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                 lineColor(Color.parseColor("#009688"))
         );
         loadedMapStyle.addLayer(routeLayer);
+    }
+
+    private void clearRoute() {
+
     }
 
     private void getRoute(final MapboxMap mapboxMap, Point origin, Point destination) {
@@ -194,10 +216,13 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
 // Retrieve and update the source designated for showing the directions route
                             GeoJsonSource source = style.getSourceAs(ROUTE_SOURCE_ID);
 
+
 // Create a LineString with the directions route's geometry and
 // reset the GeoJSON source for the route LineLayer source
                             if (source != null) {
-                                source.setGeoJson(LineString.fromPolyline(currentRoute.geometry(), PRECISION_6));
+                                LineString drawnRoute = LineString.fromPolyline(currentRoute.geometry(), PRECISION_6);
+                                source.setGeoJson(drawnRoute);
+                                source.setGeoJson(symbol1.getGeometry());
                             }
                         }
                     });
@@ -214,47 +239,51 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
         });
     }
 
-    private void routeFromRandStart(LatLng targetLatLng,MapboxMap map,Style loadedMapStyle) {
+    private void generateMore(MapboxMap map,Style loadedMapStyle) {
         if (loadedMapStyle.getSourceAs(ROUTE_SOURCE_ID) == null) {
             loadedMapStyle.addSource(new GeoJsonSource(ROUTE_SOURCE_ID));
         }
-        if (symbol1 != null) {
-            symbolManager.delete(symbol1);
-            symbolManager.delete(symbol2);
+        if (numPoints == targetNumPoints) {
+            getRoute(map,symbol1.getGeometry(),symbol2.getGeometry());
+            btnStart.setText(R.string.reset);
+            return;
         }
-        symbol1 = dropPin(targetLatLng);
         symbol2 = randFromPoint(symbol1.getGeometry(),1);
-        getRoute(map,symbol1.getGeometry(),symbol2.getGeometry());
+        checkPoint(symbol2.getGeometry(),loadedMapStyle);
     }
 
-    private void checkPoint(Point point) {
+    private void checkPoint(final Point point, final Style style) {
         MapboxGeocoding reverseGeocode = MapboxGeocoding.builder()
                 .accessToken(getString(R.string.mapbox_access_token))
                 .query(point)
                 .geocodingTypes(GeocodingCriteria.TYPE_NEIGHBORHOOD)
-                //.bbox(point.latitude(),point.longitude(),point.latitude(),point.longitude())
                 .build();
-
         reverseGeocode.enqueueCall(new Callback<GeocodingResponse>() {
             @Override
             public void onResponse(Call<GeocodingResponse> call, Response<GeocodingResponse> response) {
-
                 List<CarmenFeature> results = response.body().features();
-
                 if (results.size() > 0) {
-
                     // Log the first results Point.
+                    numPoints++;
                     Point firstResultPoint = results.get(0).center();
                     Log.d(TAG, "onResponse: " + firstResultPoint.toString());
-
+                    generateMore(map,style);
                 } else {
-
                     // No result for your request were found.
-                    Log.d(TAG, "onResponse: No result found");
-
+                    if (numPoints == 0) { //failed to choose a valid start
+                        symbolManager.delete(symbol1);
+                        symbol1 = null;
+                        btnStart.setText(R.string.choose_origin);
+                        Toast.makeText(CreateRouteActivity.this, R.string.invalid_start, Toast.LENGTH_SHORT).show();
+                        hoveringMarker.setVisibility(View.VISIBLE);
+                        Log.d(TAG, "onResponse: No result found");
+                    } else { //failed to choose a valid random point
+                        symbolManager.delete(symbol2);
+                        symbol2 = null;
+                        generateMore(map,style);
+                    }
                 }
             }
-
             @Override
             public void onFailure(Call<GeocodingResponse> call, Throwable throwable) {
                 throwable.printStackTrace();
@@ -262,33 +291,13 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
         });
     }
 
-
-    private void createRoute(LatLng targetLatLng,MapboxMap map,Style loadedMapStyle) {
-        if (symbol1 != null){
-            randFromPoint(symbol1.getGeometry(),1);
-        }
-        if (symbol1 == null) {
-            symbol1 = dropPin(targetLatLng);
-            btnStart.setText("Choose a destination");
-        } else if (symbol2 == null) {
-            symbol2 = dropPin(targetLatLng);
-            btnStart.setText("Generate Route");
-            hoveringMarker.setVisibility(View.INVISIBLE);
-        } else {
-            loadedMapStyle.addSource(new GeoJsonSource(ROUTE_SOURCE_ID));
-            initLayers(loadedMapStyle);
-            getRoute(map,symbol1.getGeometry(),symbol2.getGeometry());
-        }
-    }
-
-
     private Symbol dropPin(LatLng targetLatLng) {
         Log.i(TAG,"symbol placing");
         Symbol symbol = symbolManager.create(new
                 SymbolOptions()
                 .withLatLng(targetLatLng)
                 .withIconImage(ID_ICON)
-                .withIconSize(1.0f));
+                .withIconSize(1.1f));
         return symbol;
     }
 
@@ -297,7 +306,6 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
         distance = distance/69; //conversion from miles to lat/lng
         LatLng newPoint = new LatLng(origin.latitude() + distance * Math.sin(degrees),
                 origin.longitude() + distance * Math.cos(degrees));
-        checkPoint(origin);
         return dropPin(newPoint);
 
     }

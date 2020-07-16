@@ -9,4 +9,8 @@
     <string name="empty_password">Password can\'t be empty</string>
     <string name="passowrd_mismatch">Passwords don\'t match</string>
     <string name="user_location_permission_explanation">Allow location permissions to better customize route generation</string>
+    <string name="generate_route">Generate Route</string>
+    <string name="choose_origin">Choose origin</string>
+    <string name="invalid_start">Sorry, you can\'t start there</string>
+    <string name="reset">Reset</string>
 </resources>
