@@ -3,6 +3,7 @@ package com.example.newroutes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.FragmentManager;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -25,6 +26,8 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineJoin;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineWidth;
 
 
+import com.bumptech.glide.Glide;
+import com.example.newroutes.Fragments.SaveRouteFragment;
 import com.example.newroutes.databinding.ActivityCreateRouteBinding;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
@@ -37,8 +40,11 @@ import com.mapbox.api.geocoding.v5.GeocodingCriteria;
 import com.mapbox.api.geocoding.v5.MapboxGeocoding;
 import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.api.geocoding.v5.models.GeocodingResponse;
+import com.mapbox.api.staticmap.v1.MapboxStaticMap;
+import com.mapbox.api.staticmap.v1.StaticMapCriteria;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
+import com.mapbox.geojson.GeoJson;
 import com.mapbox.geojson.LineString;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
@@ -72,14 +78,15 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
 
     private static final String ROUTE_SOURCE_ID = "route-source-id";
     private static final String ROUTE_LAYER_ID = "route-layer-id";
-    private static final String ICON_LAYER_ID = "icon-layer-id";
-    private static final String ICON_SOURCE_ID = "icon-source-id";
+
+    final FragmentManager fragmentManager = getSupportFragmentManager();
 
     public static final String TAG = "CreateRouteActivity";
     private static final String ID_ICON = "placeholder";
     private MapView mapView;
     private MapboxMap map;
     private Button btnStart;
+    private Button btnSave;
     private ImageView hoveringMarker;
     private SymbolManager symbolManager;
     private Symbol symbol1 = null;
@@ -92,11 +99,12 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
     private Double distanceInMiles;
     private LatLng center;
     private Double radius;
-    private int numTries = 0;
     private int targetNumPoints = 4;
     private double angle;
     private double length;
+    private GeoJson routeGeoJson;
     private double width;
+    private FrameLayout flSaveRoute;
     private ArrayList<Point> points = new ArrayList<>();
     private ArrayList<Symbol> symbols = new ArrayList<>();
     private static final String DROPPED_MARKER_LAYER_ID = "DROPPED_MARKER_LAYER_ID";
@@ -118,6 +126,8 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         btnStart = binding.btnStart;
+        btnSave = binding.btnSave;
+        flSaveRoute = binding.flSaveRoute;
         etDistance = binding.etDistance;
         mapView = binding.mapView;
         mapView.onCreate(savedInstanceState);
@@ -175,7 +185,6 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                                         symbolManager.delete(symbol);
                                     }
                                     symbols.clear();
-                                    numTries = 0;
                                     hoveringMarker.setVisibility(View.VISIBLE);
                                 } else if (numPoints > 0) { //Start has been validated, distance is invalid
                                     generateMore(map,style);
@@ -185,6 +194,12 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                                     distanceInMiles = Double.parseDouble(etDistance.getText().toString());
                                     checkPoint(symbol1.getGeometry(),style);
                                 }
+                            }
+                        });
+                        btnSave.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                               SaveRoute();
                             }
                         });
                     }
@@ -202,6 +217,27 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                 lineColor(Color.parseColor("#009688"))
         );
         loadedMapStyle.addLayer(routeLayer);
+    }
+
+    private void SaveRoute() {
+        MapboxStaticMap staticImage = MapboxStaticMap.builder()
+                .accessToken(getString(R.string.mapbox_access_token))
+                .styleId(StaticMapCriteria.LIGHT_STYLE)
+                .cameraPoint(symbol1.getGeometry()) // Image's centerpoint on map
+                .cameraZoom(12)
+                .width(320) // Image width
+                .height(320) // Image height
+                .retina(true) // Retina 2x image will be returned
+                .geoJson(routeGeoJson)
+                .build();
+        Toast.makeText(this, "Loading map", Toast.LENGTH_SHORT).show();
+        String imageUrl = staticImage.url().toString();
+        Bundle bundle = new Bundle();
+        bundle.putString("imageUrl",imageUrl);
+        bundle.putDouble("distance",currentRoute.distance()*0.000621371);
+        SaveRouteFragment fragment = new SaveRouteFragment();
+        fragment.setArguments(bundle);
+        fragmentManager.beginTransaction().replace(flSaveRoute.getId(),fragment).commit();
     }
 
     private void getRoute(final MapboxMap mapboxMap, Point origin) {
@@ -253,6 +289,7 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
 // reset the GeoJSON source for the route LineLayer source
                             if (source != null) {
                                 LineString drawnRoute = LineString.fromPolyline(currentRoute.geometry(), PRECISION_6);
+                                routeGeoJson = drawnRoute;
                                 source.setGeoJson(drawnRoute);
                             }
                         }
@@ -369,9 +406,9 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                 latlng1.getLongitude() + length * Math.cos(Math.toRadians(degrees+90)));
         LatLng latlng3 = new LatLng(latlng2.getLatitude() - width * Math.sin(Math.toRadians(degrees+180)),
                 latlng2.getLongitude() - width * Math.cos(Math.toRadians(degrees+180)));
-        dropPin(latlng1);
-        dropPin(latlng2);
-        dropPin(latlng3);
+        dropHiddenPin(latlng1);
+        dropHiddenPin(latlng2);
+        dropHiddenPin(latlng3);
     }
 
     private Symbol randFromCenter() {
