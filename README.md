@@ -12,6 +12,7 @@ Original App Design Project - README Template
 ## Overview
 ### Description
 An app that randomly generates running routes using google maps or mapbox.
+Demo of app progress: https://recordit.co/JxXIjy4jL9
 
 ### App Evaluation
 [Evaluation of your app across the following attributes]
