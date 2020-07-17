@@ -38,6 +38,7 @@ import com.mapbox.api.geocoding.v5.MapboxGeocoding;
 import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.api.geocoding.v5.models.GeocodingResponse;
 import com.mapbox.geojson.Feature;
+import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.geojson.LineString;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
@@ -82,18 +83,22 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
     private ImageView hoveringMarker;
     private SymbolManager symbolManager;
     private Symbol symbol1 = null;
-    private Symbol symbol2 = null;
     private PermissionsManager permissionsManager;
     private DirectionsRoute currentRoute;
     private EditText etDistance;
     private MapboxDirections client;
     private MapboxGeocoding geoClient;
     private int numPoints;
+    private Double distanceInMiles;
     private LatLng center;
     private Double radius;
+    private int numTries = 0;
     private int targetNumPoints = 4;
     private double angle;
+    private double length;
+    private double width;
     private ArrayList<Point> points = new ArrayList<>();
+    private ArrayList<Symbol> symbols = new ArrayList<>();
     private static final String DROPPED_MARKER_LAYER_ID = "DROPPED_MARKER_LAYER_ID";
     ActivityCreateRouteBinding binding;
 
@@ -162,18 +167,22 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                                     numPoints = 0;
                                     btnStart.setText(R.string.choose_origin);
                                     GeoJsonSource source = style.getSourceAs(ROUTE_SOURCE_ID);
-                                    source.setGeoJson(symbol1.getGeometry());
+                                    source.setGeoJson(FeatureCollection.fromJson(""));
                                     symbolManager.delete(symbol1);
-                                    symbolManager.delete(symbol2);
                                     symbol1 = null;
-                                    symbol2 = null;
                                     points.clear();
+                                    for (Symbol symbol : symbols) {
+                                        symbolManager.delete(symbol);
+                                    }
+                                    symbols.clear();
+                                    numTries = 0;
                                     hoveringMarker.setVisibility(View.VISIBLE);
                                 } else if (numPoints > 0) { //Start has been validated, distance is invalid
                                     generateMore(map,style);
                                 } else if (etDistance.getText().toString().isEmpty() || Double.parseDouble(etDistance.getText().toString())<=0){ //Generate click
                                     Toast.makeText(CreateRouteActivity.this, "Enter a valid distance", Toast.LENGTH_SHORT).show();
                                 } else { //generate with valid distance
+                                    distanceInMiles = Double.parseDouble(etDistance.getText().toString());
                                     checkPoint(symbol1.getGeometry(),style);
                                 }
                             }
@@ -195,20 +204,18 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
         loadedMapStyle.addLayer(routeLayer);
     }
 
-    private void clearRoute() {
-
-    }
-
-    private void getRoute(final MapboxMap mapboxMap, Point origin, Point destination) {
+    private void getRoute(final MapboxMap mapboxMap, Point origin) {
         MapboxDirections.Builder builder = MapboxDirections.builder()
                 .origin(origin)
                 .destination(origin)
+                .alternatives(true)
                 .overview(DirectionsCriteria.OVERVIEW_FULL)
                 .profile(DirectionsCriteria.PROFILE_WALKING)
                 .accessToken(getString(R.string.mapbox_access_token));
 
         for (Point waypoint : points) {
             builder.addWaypoint(waypoint);
+            builder.continueStraight(true);
         }
         client = builder.build();
 
@@ -225,10 +232,14 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                     Log.e(TAG,"No routes found");
                     return;
                 }
-
 // Get the directions route
                 currentRoute = response.body().routes().get(0);
-
+                for (DirectionsRoute route : response.body().routes()) {
+                    double currentDistance = route.distance()*0.000621371;
+                    if (Math.abs(currentDistance - distanceInMiles) < (currentRoute.distance() -distanceInMiles)) {
+                        currentRoute = route;
+                    }
+                }
 // Make a toast which displays the route's distance
                 Toast.makeText(CreateRouteActivity.this, (Double.toString(currentRoute.distance()*0.000621371)), Toast.LENGTH_SHORT).show();
                 //0.000621371 is conversion from meters to miles
@@ -236,11 +247,8 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                     mapboxMap.getStyle(new Style.OnStyleLoaded() {
                         @Override
                         public void onStyleLoaded(@NonNull Style style) {
-
 // Retrieve and update the source designated for showing the directions route
                             GeoJsonSource source = style.getSourceAs(ROUTE_SOURCE_ID);
-
-
 // Create a LineString with the directions route's geometry and
 // reset the GeoJSON source for the route LineLayer source
                             if (source != null) {
@@ -267,12 +275,13 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
             loadedMapStyle.addSource(new GeoJsonSource(ROUTE_SOURCE_ID));
         }
         if (numPoints == targetNumPoints) {
-            getRoute(map,symbol1.getGeometry(),symbol2.getGeometry());
+            getRoute(map,symbol1.getGeometry());
             btnStart.setText(R.string.reset);
             return;
         }
-        symbol2 = randFromCenter();
-        checkPoint(symbol2.getGeometry(),loadedMapStyle);
+        Symbol newSymbol = randFromCenter();
+        symbols.add(newSymbol);
+        checkPoint(newSymbol.getGeometry(),loadedMapStyle);
     }
 
     private void checkPoint(final Point point, final Style style) {
@@ -290,9 +299,10 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                     if (numPoints >0) {
                         points.add(point);
                     } else {
-                        radius = Double.parseDouble(etDistance.getText().toString())/(2 * Math.PI);
+                        radius = distanceInMiles/(2 * Math.PI);
                         radius = radius/69;
                         generateCenter(symbol1.getGeometry());
+                        generateRectangle(symbol1.getGeometry());
                     }
                     Point firstResultPoint = results.get(0).center();
                     Log.d(TAG, "onResponse: " + firstResultPoint.toString());
@@ -307,9 +317,10 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                         Toast.makeText(CreateRouteActivity.this, R.string.invalid_start, Toast.LENGTH_SHORT).show();
                         hoveringMarker.setVisibility(View.VISIBLE);
                         Log.d(TAG, "onResponse: No result found");
-                    } else { //failed to choose a valid random point
-                        symbolManager.delete(symbol2);
-                        symbol2 = null;
+                    } else { //failed to choose a valid random point, repick center and restart process
+                        symbols.clear();
+                        numPoints = 1;
+                        generateCenter(symbol1.getGeometry());
                         generateMore(map,style);
                     }
                 }
@@ -330,23 +341,45 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                 .withIconSize(1.1f));
         return symbol;
     }
+    private Symbol dropHiddenPin(LatLng targetLatLng) {
+        Log.i(TAG,"symbol placing");
+        Symbol symbol = symbolManager.create(new
+                SymbolOptions()
+                .withLatLng(targetLatLng));
+        return symbol;
+    }
 
     private void generateCenter(Point origin) {
         double degrees = Math.random() * 360;
-        angle = (degrees + 180) % 360;
-        LatLng newPoint = new LatLng(origin.latitude() + radius * Math.sin(degrees),
-                origin.longitude() + radius * Math.cos(degrees));
+        angle = (degrees) % 360;
+        LatLng newPoint = new LatLng(origin.latitude() + radius * Math.sin(Math.toRadians(degrees)),
+                origin.longitude() + radius * Math.cos(Math.toRadians(degrees)));
         center = newPoint;
-        Symbol centerPin = dropPin(newPoint);
-        centerPin.setIconSize(2f);
+    }
+
+    public void generateRectangle(Point origin) {
+        width =(Math.random() * (distanceInMiles/2));
+        length = (distanceInMiles - (width*2))/2;
+        width = width/69;
+        length = length/69;
+        double degrees = Math.random() * 360;
+        LatLng latlng1 = new LatLng(origin.latitude() + width * Math.sin(Math.toRadians(degrees)),
+                origin.longitude() + width * Math.cos(Math.toRadians(degrees)));
+        LatLng latlng2 = new LatLng(latlng1.getLatitude() + length * Math.sin(Math.toRadians(degrees+90)),
+                latlng1.getLongitude() + length * Math.cos(Math.toRadians(degrees+90)));
+        LatLng latlng3 = new LatLng(latlng2.getLatitude() - width * Math.sin(Math.toRadians(degrees+180)),
+                latlng2.getLongitude() - width * Math.cos(Math.toRadians(degrees+180)));
+        dropPin(latlng1);
+        dropPin(latlng2);
+        dropPin(latlng3);
     }
 
     private Symbol randFromCenter() {
-        double degrees = (angle + (360/(targetNumPoints-1))) % 360;
+        double degrees = (angle + (360/(targetNumPoints))) % 360;
         angle = degrees;
-        LatLng newPoint = new LatLng(center.getLatitude() + radius * Math.sin(Math.toRadians(degrees)),
-                center.getLongitude() + radius* Math.cos(Math.toRadians(degrees)));
-        return dropPin(newPoint);
+        LatLng newPoint = new LatLng(center.getLatitude() - radius * Math.sin(Math.toRadians(degrees)),
+                center.getLongitude() - radius* Math.cos(Math.toRadians(degrees)));
+        return dropHiddenPin(newPoint);
 
     }
 
