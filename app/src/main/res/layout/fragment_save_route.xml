@@ -24,6 +24,7 @@
         android:id="@+id/ivMap"
         android:layout_width="match_parent"
         android:layout_height="200dp"
+        android:scaleType="centerCrop"
         tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
     <TextView
@@ -35,5 +36,16 @@
         android:textAlignment="center"
         android:textSize="18sp"
         tools:text="5 Miles" />
+
+    <Button
+        android:id="@+id/btnSave"
+        android:layout_width="257dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvDistance"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:background="@color/colorPrimaryDark"
+        android:text="Save"
+        android:textColor="#D5D5D5" />
 
 </RelativeLayout>

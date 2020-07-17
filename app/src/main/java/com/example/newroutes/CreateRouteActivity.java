@@ -15,7 +15,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineCap;
@@ -29,6 +33,9 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineWidth;
 import com.bumptech.glide.Glide;
 import com.example.newroutes.Fragments.SaveRouteFragment;
 import com.example.newroutes.databinding.ActivityCreateRouteBinding;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.api.directions.v5.DirectionsCriteria;
@@ -66,6 +73,9 @@ import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.mapboxsdk.utils.BitmapUtils;
 import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
 
+import org.json.JSONObject;
+import org.json.JSONStringer;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -87,6 +97,10 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
     private MapboxMap map;
     private Button btnStart;
     private Button btnSave;
+    private EditText etRouteName;
+    private TextView tvDistanceText;
+    private ImageView ivMap;
+    private Button btnSaveFinal;
     private ImageView hoveringMarker;
     private SymbolManager symbolManager;
     private Symbol symbol1 = null;
@@ -98,6 +112,7 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
     private int numPoints;
     private Double distanceInMiles;
     private LatLng center;
+    private Point centerPoint;
     private Double radius;
     private int targetNumPoints = 4;
     private double angle;
@@ -129,6 +144,10 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
         btnSave = binding.btnSave;
         flSaveRoute = binding.flSaveRoute;
         etDistance = binding.etDistance;
+        etRouteName = binding.etRouteName;
+        ivMap = binding.ivMap;
+        tvDistanceText = binding.tvDistanceText;
+        btnSaveFinal = binding.btnSaveFinal;
         mapView = binding.mapView;
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
@@ -220,10 +239,11 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
     }
 
     private void SaveRoute() {
+        flSaveRoute.setVisibility(View.VISIBLE);
         MapboxStaticMap staticImage = MapboxStaticMap.builder()
                 .accessToken(getString(R.string.mapbox_access_token))
                 .styleId(StaticMapCriteria.LIGHT_STYLE)
-                .cameraPoint(symbol1.getGeometry()) // Image's centerpoint on map
+                .cameraPoint(centerPoint) // Image's centerpoint on map
                 .cameraZoom(12)
                 .width(320) // Image width
                 .height(320) // Image height
@@ -231,13 +251,30 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                 .geoJson(routeGeoJson)
                 .build();
         Toast.makeText(this, "Loading map", Toast.LENGTH_SHORT).show();
-        String imageUrl = staticImage.url().toString();
-        Bundle bundle = new Bundle();
-        bundle.putString("imageUrl",imageUrl);
-        bundle.putDouble("distance",currentRoute.distance()*0.000621371);
-        SaveRouteFragment fragment = new SaveRouteFragment();
-        fragment.setArguments(bundle);
-        fragmentManager.beginTransaction().replace(flSaveRoute.getId(),fragment).commit();
+        final Double distance = currentRoute.distance() * 0.000621371;
+        final String imageUrl = staticImage.url().toString();
+        tvDistanceText.setText(distance.toString() + " Miles");
+        Glide.with(this)
+                .load(imageUrl)
+                .placeholder(R.drawable.ic_uploading)
+                .error(R.drawable.ic_upload_failed)
+                .into(ivMap);
+
+        JsonObject jsonObject = JsonParser.parseString(routeGeoJson.toJson()).getAsJsonObject();
+
+        ArrayList<Coordinate> linestring = new ArrayList<>();
+
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //save route here
+                Route route = new Route();
+                route.setDistance(distance);
+                route.setName(etRouteName.getText().toString());
+                route.setImageUrl(imageUrl);
+
+            }
+        });
     }
 
     private void getRoute(final MapboxMap mapboxMap, Point origin) {
@@ -392,6 +429,7 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
         LatLng newPoint = new LatLng(origin.latitude() + radius * Math.sin(Math.toRadians(degrees)),
                 origin.longitude() + radius * Math.cos(Math.toRadians(degrees)));
         center = newPoint;
+        centerPoint = dropHiddenPin(center).getGeometry();
     }
 
     public void generateRectangle(Point origin) {
