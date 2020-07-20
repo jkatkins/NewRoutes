@@ -17,7 +17,8 @@ public class Route extends ParseObject {
 
 
     public String getName () {
-        return getString(KEY_NAME);
+        String result = getString(KEY_NAME);
+        return result;
     }
     public void setName(String name) {
         put(KEY_NAME,name);

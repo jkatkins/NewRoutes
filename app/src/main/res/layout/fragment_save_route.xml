@@ -31,7 +31,7 @@
         android:id="@+id/tvDistance"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/etRouteName"
+        android:layout_below="@+id/tvRouteName"
         android:layout_marginTop="0dp"
         android:textAlignment="center"
         android:textSize="18sp"

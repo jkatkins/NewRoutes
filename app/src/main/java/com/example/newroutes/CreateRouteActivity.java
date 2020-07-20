@@ -33,11 +33,7 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineWidth;
 
 
 import com.bumptech.glide.Glide;
-import com.example.newroutes.Fragments.SaveRouteFragment;
 import com.example.newroutes.databinding.ActivityCreateRouteBinding;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.api.directions.v5.DirectionsCriteria;
@@ -51,7 +47,6 @@ import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.api.geocoding.v5.models.GeocodingResponse;
 import com.mapbox.api.staticmap.v1.MapboxStaticMap;
 import com.mapbox.api.staticmap.v1.StaticMapCriteria;
-import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.geojson.GeoJson;
 import com.mapbox.geojson.LineString;
@@ -73,13 +68,9 @@ import com.mapbox.mapboxsdk.style.layers.LineLayer;
 import com.mapbox.mapboxsdk.style.layers.Property;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.mapboxsdk.utils.BitmapUtils;
-import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
-
-import org.json.JSONObject;
-import org.json.JSONStringer;
 
 import retrofit2.Call;
 import retrofit2.Callback;
