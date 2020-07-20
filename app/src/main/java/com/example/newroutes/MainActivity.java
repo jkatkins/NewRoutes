@@ -15,6 +15,8 @@ import com.example.newroutes.Fragments.ProfileFragment;
 import com.example.newroutes.Fragments.RoutesFragment;
 import com.example.newroutes.databinding.ActivityMainBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.mapbox.api.geocoding.v5.MapboxGeocoding;
+import com.parse.ParseUser;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,8 +48,12 @@ public class MainActivity extends AppCompatActivity {
                         Intent createIntent = new Intent(MainActivity.this,CreateRouteActivity.class);
                         startActivity(createIntent);
                         return false;
-                    case R.id.item_friends:
+                    case R.id.item_friends: //TODO move logout to its own thing, not have it here
                         //fragment =
+                        replaceFragment = false;
+                        ParseUser.logOutInBackground();
+                        Intent logoutIntent = new Intent(MainActivity.this,LoginActivity.class);
+                        startActivity(logoutIntent);
                     case R.id.item_home:
                         //fragment =
                     case R.id.item_profile:

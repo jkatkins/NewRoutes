@@ -47,6 +47,7 @@ import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.api.geocoding.v5.models.GeocodingResponse;
 import com.mapbox.api.staticmap.v1.MapboxStaticMap;
 import com.mapbox.api.staticmap.v1.StaticMapCriteria;
+import com.mapbox.geojson.BoundingBox;
 import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.geojson.GeoJson;
 import com.mapbox.geojson.LineString;
@@ -61,6 +62,7 @@ import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
+import com.mapbox.mapboxsdk.plugins.annotation.Line;
 import com.mapbox.mapboxsdk.plugins.annotation.Symbol;
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolManager;
 import com.mapbox.mapboxsdk.plugins.annotation.SymbolOptions;
@@ -236,11 +238,12 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
 
     private void SaveRoute() {
         flSaveRoute.setVisibility(View.VISIBLE);
+        shortenGeoJson();
         MapboxStaticMap staticImage = MapboxStaticMap.builder()
                 .accessToken(getString(R.string.mapbox_access_token))
                 .styleId(StaticMapCriteria.LIGHT_STYLE)
                 .cameraPoint(centerPoint) // Image's centerpoint on map
-                .cameraZoom(12)
+                .cameraZoom(9)
                 .width(320) // Image width
                 .height(320) // Image height
                 .retina(true) // Retina 2x image will be returned
@@ -294,6 +297,27 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                 });
             }
         });
+    }
+
+    private void shortenGeoJson() {
+        JsonObject jsonObject = JsonParser.parseString(routeGeoJson.toJson()).getAsJsonObject();
+        final JsonArray coordinatesJsonArray = jsonObject.getAsJsonArray("coordinates");
+        while (coordinatesJsonArray.size() >= 100) {
+            for (int i = 0; i < coordinatesJsonArray.size();i+=1) {
+                coordinatesJsonArray.remove(i);
+            }
+        }
+        ArrayList<Point> points = new ArrayList<>();
+        for (int i = 0;i < coordinatesJsonArray.size();i++) {
+            JsonArray currentSpot = coordinatesJsonArray.get(i).getAsJsonArray();
+            Point newPoint = Point.fromLngLat(currentSpot.get(0).getAsDouble(),currentSpot.get(1).getAsInt());
+            points.add(newPoint);
+        }
+        LineString lineString = LineString.fromLngLats(points);
+        routeGeoJson = lineString;
+
+
+
     }
 
     private void getRoute(final MapboxMap mapboxMap, Point origin) {
