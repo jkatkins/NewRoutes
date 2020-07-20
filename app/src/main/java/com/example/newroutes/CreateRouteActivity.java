@@ -18,6 +18,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -72,6 +74,9 @@ import com.mapbox.mapboxsdk.style.layers.Property;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.mapbox.mapboxsdk.utils.BitmapUtils;
 import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
+import com.parse.ParseException;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import org.json.JSONObject;
 import org.json.JSONStringer;
@@ -262,17 +267,40 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
 
         JsonObject jsonObject = JsonParser.parseString(routeGeoJson.toJson()).getAsJsonObject();
 
-        ArrayList<Coordinate> linestring = new ArrayList<>();
+        JsonArray coordinatesJsonArray = jsonObject.getAsJsonArray("coordinates");
+        final ArrayList<ArrayList<Double>> coordinates = new ArrayList<>();
 
-        btnSave.setOnClickListener(new View.OnClickListener() {
+        for (JsonElement i: coordinatesJsonArray) {
+            JsonArray currentCoord = i.getAsJsonArray();
+            ArrayList<Double> toInsert = new ArrayList<>();
+            toInsert.add(currentCoord.get(0).getAsDouble());
+            toInsert.add(currentCoord.get(1).getAsDouble());
+            coordinates.add(toInsert);
+        }
+
+        btnSaveFinal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //save route here
+
                 Route route = new Route();
                 route.setDistance(distance);
                 route.setName(etRouteName.getText().toString());
                 route.setImageUrl(imageUrl);
-
+                route.setLinestring(coordinates);
+                route.setUser(ParseUser.getCurrentUser());
+                route.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e == null) {
+                            Toast.makeText(CreateRouteActivity.this, "Route saved successfully", Toast.LENGTH_LONG).show();
+                            flSaveRoute.setVisibility(View.GONE);
+                        } else {
+                            Toast.makeText(CreateRouteActivity.this, "Route save failed," + e, Toast.LENGTH_SHORT).show();
+                            Log.e(TAG,e.toString());
+                        }
+                    }
+                });
             }
         });
     }

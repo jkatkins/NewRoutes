@@ -1,5 +1,6 @@
 package com.example.newroutes;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -16,16 +17,16 @@ import com.example.newroutes.Fragments.ProfileFragment;
 import com.example.newroutes.Fragments.RecentFragment;
 import com.example.newroutes.Fragments.SavedRoutesFragment;
 import com.example.newroutes.databinding.ActivityMainBinding;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.parse.ParseUser;
 
 public class MainActivity extends AppCompatActivity {
 
     ActivityMainBinding binding;
-    private DrawerLayout mDrawer;
     private Toolbar toolbar;
-    private NavigationView nvDrawer;
-    private FrameLayout flContent;
+    private FrameLayout flContainer;
+    private BottomNavigationView bottomNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,29 +40,39 @@ public class MainActivity extends AppCompatActivity {
         // This will display an Up icon (<-), we will replace it with hamburger later
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        // Find our drawer view
-        mDrawer = binding.drawerLayout;
-        nvDrawer = binding.nvView;
-        flContent = binding.flContent;
+        flContainer = binding.flContainer;
+        bottomNavigationView = binding.bottomNavigation;
 
-        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_hamburger);
-        // Setup drawer view
-        setupDrawerContent(nvDrawer);
-        //Starts off by opening up the profile fragment
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(flContent.getId(), new ProfileFragment()).commit();
-        setTitle("Profile");
-    }
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                Fragment fragment = null;
+                boolean replaceFragment = true;
+                switch(item.getItemId()) {
+                    case R.id.item_new:
+                        replaceFragment = false;
+                        Intent createIntent = new Intent(MainActivity.this,CreateRouteActivity.class);
+                        startActivity(createIntent);
+                        break;
+                    case R.id.item_recent:
+                    case R.id.item_friends:
+                    case R.id.item_home:
+                    case R.id.item_routes:
+                    default:
+                        fragment = new RecentFragment();
+                        if (replaceFragment) {
+                            FragmentManager fragmentManager = getSupportFragmentManager();
+                            fragmentManager.beginTransaction().replace(flContainer.getId(),fragment).commit();
+                        }
+                }
 
-    private void setupDrawerContent(NavigationView navigationView) {
-        navigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        selectDrawerItem(menuItem);
-                        return true;
-                    }
-                });
+
+
+                return false;
+            }
+        });
+
+
     }
 
     public void selectDrawerItem(MenuItem menuItem) {
@@ -93,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         // Insert the fragment by replacing any existing fragment
         if (replaceFragment) {
             FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(flContent.getId(),fragment).commit();
+            fragmentManager.beginTransaction().replace(flContainer.getId(),fragment).commit();
 
             // Highlight the selected item has been done by NavigationView
             menuItem.setChecked(true);
@@ -101,20 +112,7 @@ public class MainActivity extends AppCompatActivity {
             setTitle(menuItem.getTitle());
         }
 
-        // Close the navigation drawer
-        mDrawer.closeDrawers();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // The action bar home/up action should open or close the drawer.
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                mDrawer.openDrawer(GravityCompat.START);
-                return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
 }

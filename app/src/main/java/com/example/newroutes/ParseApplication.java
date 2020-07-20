@@ -13,7 +13,6 @@ public class ParseApplication extends Application {
         super.onCreate();
 
         ParseObject.registerSubclass(Route.class);
-        ParseObject.registerSubclass(Coordinate.class);
 
         // set applicationId, and server server based on the values in the Heroku settings.
         // clientKey is not needed unless explicitly configured

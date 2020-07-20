@@ -13,7 +13,6 @@ public class Route extends ParseObject {
     public static final String KEY_DISTANCE = "Distance";
     public static final String KEY_LINESTRING = "Linestring";
     public static final String KEY_IMAGEURL = "ImageUrl";
-    public static final String KEY_ORIGIN = "Origin";
     public static final String KEY_USER = "User";
 
 
@@ -31,10 +30,10 @@ public class Route extends ParseObject {
         put(KEY_DISTANCE,distance);
     }
 
-    public ArrayList<Coordinate> getLinestring() {
-        return (ArrayList<Coordinate>)get(KEY_LINESTRING);
+    public ArrayList<Double[]> getLinestring() {
+        return (ArrayList<Double[]>)get(KEY_LINESTRING);
     }
-    public void setLinestring(ArrayList<Coordinate> coordinates) {
+    public void setLinestring(ArrayList<ArrayList<Double>> coordinates) {
         put(KEY_LINESTRING,coordinates);
     }
 
@@ -43,13 +42,6 @@ public class Route extends ParseObject {
     }
     public void setImageUrl(String imageUrl) {
         put(KEY_IMAGEURL,imageUrl);
-    }
-
-    public Coordinate getOrigin() {
-        return (Coordinate)get(KEY_ORIGIN);
-    }
-    public void setOrigin(Coordinate origin){
-        put(KEY_ORIGIN,origin);
     }
 
     public ParseUser getUser() {
