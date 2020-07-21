@@ -7,17 +7,16 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <RelativeLayout
-        android:id="@+id/rlProfileTop"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="0dp"
+    <Button
+        android:id="@+id/btnLogout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tvUsername"
+        android:layout_centerHorizontal="true"
         android:layout_marginTop="0dp"
-        android:background="#9A9A9A">
+        android:text="Logout" />
 
-        <TextView
+    <TextView
             android:id="@+id/tvUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -39,6 +38,5 @@
             android:scaleType="centerCrop"
             tools:srcCompat="@tools:sample/avatars" />
 
-    </RelativeLayout>
 
 </RelativeLayout>

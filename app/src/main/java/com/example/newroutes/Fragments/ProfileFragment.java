@@ -24,6 +24,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.newroutes.LoginActivity;
+import com.example.newroutes.MainActivity;
 import com.example.newroutes.R;
 import com.example.newroutes.databinding.ActivityMainBinding;
 import com.example.newroutes.databinding.FragmentProfileBinding;
@@ -41,12 +43,9 @@ public class ProfileFragment extends Fragment {
     public static final String TAG = "ProfileFragment";
 
     private FragmentProfileBinding binding;
-    public Button btnMap;
-    private Button btnRoutes;
-    private Button btnRecent;
+    public Button btnLogout;
     private TextView tvUsername;
     private ImageView ivProfilePic;
-    private FrameLayout flProfileFragments;
 
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 43;
     public String photoFileName = "photo.jpg";
@@ -76,6 +75,7 @@ public class ProfileFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         tvUsername = binding.tvUsername;
         ivProfilePic = binding.ivProfilePic;
+        btnLogout = binding.btnLogout;
 
         //Fill with data
         ParseUser user = ParseUser.getCurrentUser();
@@ -88,6 +88,15 @@ public class ProfileFragment extends Fragment {
             public void onClick(View view) {
                 //allow user to take new profile picture here
                 launchCamera();
+            }
+        });
+
+        btnLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ParseUser.logOutInBackground();
+                Intent logoutIntent = new Intent(getContext(), LoginActivity.class);
+                startActivity(logoutIntent);
             }
         });
     }

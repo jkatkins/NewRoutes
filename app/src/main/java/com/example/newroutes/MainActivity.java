@@ -14,6 +14,7 @@ import android.widget.FrameLayout;
 import com.example.newroutes.Fragments.HomeFragment;
 import com.example.newroutes.Fragments.ProfileFragment;
 import com.example.newroutes.Fragments.RoutesFragment;
+import com.example.newroutes.Fragments.UsersFragment;
 import com.example.newroutes.databinding.ActivityMainBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.mapbox.api.geocoding.v5.MapboxGeocoding;
@@ -42,35 +43,26 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 Fragment fragment = null;
-                boolean replaceFragment = true;
                 switch(item.getItemId()) {
                     case R.id.item_new:
-                        replaceFragment = false;
                         Intent createIntent = new Intent(MainActivity.this,CreateRouteActivity.class);
                         startActivity(createIntent);
                         return false;
-                    case R.id.item_friends: //TODO move logout to its own thing, not have it here
-                        //fragment =
-                        replaceFragment = false;
-                        ParseUser.logOutInBackground();
-                        Intent logoutIntent = new Intent(MainActivity.this,LoginActivity.class);
-                        startActivity(logoutIntent);
+                    case R.id.item_friends: //TODO fill this out
+                        fragment = new UsersFragment();
+                        break;
                     case R.id.item_home:
                         fragment = new HomeFragment();
-                        break;
-                    case R.id.item_profile:
-                        fragment = new ProfileFragment();
                         break;
                     case R.id.item_routes:
                         fragment = new RoutesFragment();
                         break;
+                    case R.id.item_profile:
                     default:
                         fragment = new ProfileFragment();
                 }
-                if (replaceFragment) {
                     FragmentManager fragmentManager = getSupportFragmentManager();
                     fragmentManager.beginTransaction().replace(flContainer.getId(),fragment).commit();
-                }
                 return true;
             }
         });
