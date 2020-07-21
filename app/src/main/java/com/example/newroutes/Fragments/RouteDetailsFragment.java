@@ -1,5 +1,6 @@
 package com.example.newroutes.Fragments;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -16,16 +17,35 @@ import com.example.newroutes.R;
 import com.example.newroutes.Route;
 import com.example.newroutes.databinding.FragmentRouteDetailsBinding;
 import com.mapbox.android.core.permissions.PermissionsListener;
+import com.mapbox.geojson.GeoJson;
+import com.mapbox.geojson.LineString;
+import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
+import com.mapbox.mapboxsdk.plugins.annotation.Line;
+import com.mapbox.mapboxsdk.style.layers.LineLayer;
+import com.mapbox.mapboxsdk.style.layers.Property;
+import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 
 import org.parceler.Parcels;
 
+import java.util.ArrayList;
+
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineCap;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineColor;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineJoin;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineWidth;
+
 public class RouteDetailsFragment extends Fragment implements OnMapReadyCallback {
 
+
+    private static final String ROUTE_SOURCE_ID = "route-source-id";
+    private static final String ROUTE_LAYER_ID = "route-layer-id";
     private MapboxMap map;
     private CardView cvInfoContainer;
     private MapView mapView;
@@ -73,18 +93,45 @@ public class RouteDetailsFragment extends Fragment implements OnMapReadyCallback
 
 
     @Override
-    public void onMapReady(@NonNull MapboxMap mapboxMap) {
+    public void onMapReady(@NonNull final MapboxMap mapboxMap) {
         map = mapboxMap;
 
         mapboxMap.setStyle(new Style.Builder().fromUri("mapbox://styles/mapbox/cjerxnqt3cgvp2rmyuxbeqme7"),
                 new Style.OnStyleLoaded() {
                     @Override
                     public void onStyleLoaded(@NonNull final Style style) {
-
+                        initLayers(style);
                     }
                 });
     }
-    
+
+    private void initLayers(@NonNull Style loadedMapStyle) {
+        LineLayer routeLayer = new LineLayer(ROUTE_LAYER_ID, ROUTE_SOURCE_ID);
+
+// Add the LineLayer to the map. This layer will display the directions route.
+        routeLayer.setProperties(
+                lineCap(Property.LINE_CAP_ROUND),
+                lineJoin(Property.LINE_JOIN_ROUND),
+                lineWidth(5f),
+                lineColor(Color.parseColor("#009688"))
+        );
+        loadedMapStyle.addLayer(routeLayer);
+        loadedMapStyle.addSource(new GeoJsonSource(ROUTE_SOURCE_ID));
+        GeoJsonSource source = loadedMapStyle.getSourceAs(ROUTE_SOURCE_ID);
+        ArrayList<Point> points = new ArrayList<>();
+        ArrayList<ArrayList<Double>> routeArray = route.getLinestring();
+        for (ArrayList<Double> coordPair : routeArray) {
+            Point newPoint = Point.fromLngLat(coordPair.get(0),coordPair.get(1));
+            points.add(newPoint);
+        }
+        LineString routeLineString = LineString.fromLngLats(points);
+        source.setGeoJson(routeLineString);
+        CameraPosition position = new CameraPosition.Builder()
+                .target(new LatLng(points.get(0).latitude(), points.get(0).longitude()))
+                .zoom(12)
+                .build();
+        map.setCameraPosition(position);
+    }
 
     //lifecycle methods for the map
     @Override

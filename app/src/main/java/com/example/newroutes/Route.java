@@ -31,8 +31,8 @@ public class Route extends ParseObject {
         put(KEY_DISTANCE,distance);
     }
 
-    public ArrayList<Double[]> getLinestring() {
-        return (ArrayList<Double[]>)get(KEY_LINESTRING);
+    public ArrayList<ArrayList<Double>> getLinestring() {
+        return (ArrayList<ArrayList<Double>>)get(KEY_LINESTRING);
     }
     public void setLinestring(ArrayList<ArrayList<Double>> coordinates) {
         put(KEY_LINESTRING,coordinates);
