@@ -17,6 +17,7 @@ import com.example.newroutes.databinding.FragmentRoutesBinding;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,18 @@ public class HomeRoutesFragment extends RoutesFragment{
 
     @Override
     protected void queryRoutes() {
-        super.queryRoutes();
-        Log.i("homeroutes","query in home routes");
+        try {
+            ParseUser currentUser = ParseUser.getCurrentUser().fetch();
+            ArrayList<Route> userRoutes = (ArrayList<Route>)currentUser.get("Routes");
+            if (userRoutes == null) {
+                return;
+            }
+            for (Route route : userRoutes) {
+                route = route.fetch();
+                routes.add(route);
+            }
+        } catch (ParseException e) {
+            //TODO add error handling
+        }
     }
 }

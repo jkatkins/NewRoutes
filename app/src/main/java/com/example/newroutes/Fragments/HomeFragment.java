@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,8 +54,9 @@ public class HomeFragment extends Fragment {
         btnRoutes.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View view) {
+               Log.i("homeroutes","Routes was clicked");
                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-               fragmentManager.beginTransaction().replace(flHomeContainer.getId(),new HomeRoutesFragment());
+               fragmentManager.beginTransaction().replace(flHomeContainer.getId(),new HomeRoutesFragment()).commit();
            }
        });
     }
