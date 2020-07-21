@@ -65,7 +65,7 @@ public class RouteDetailsActivity extends AppCompatActivity implements OnMapRead
         tvDistance = binding.tvDistance;
         tvRouteName = binding.tvRouteName;
 
-        tvDistance.setText(route.getDistance().toString());
+        tvDistance.setText(route.getDistance().toString() + " miles");
         tvRouteName.setText(route.getName());
 
         mapView.onCreate(savedInstanceState);

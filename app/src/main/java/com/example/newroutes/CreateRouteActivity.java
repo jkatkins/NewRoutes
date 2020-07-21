@@ -234,20 +234,21 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                 lineColor(Color.parseColor("#009688"))
         );
         loadedMapStyle.addLayer(routeLayer);
+        loadedMapStyle.addSource(new GeoJsonSource(ROUTE_SOURCE_ID));
     }
 
     private void SaveRoute() {
         flSaveRoute.setVisibility(View.VISIBLE);
-        shortenGeoJson();
+        LineString overlay = shortenGeoJson();
         MapboxStaticMap staticImage = MapboxStaticMap.builder()
                 .accessToken(getString(R.string.mapbox_access_token))
                 .styleId(StaticMapCriteria.LIGHT_STYLE)
                 .cameraPoint(centerPoint) // Image's centerpoint on map
-                .cameraZoom(9)
+                .cameraZoom(11)
                 .width(320) // Image width
                 .height(320) // Image height
                 .retina(true) // Retina 2x image will be returned
-                .geoJson(routeGeoJson)
+                .geoJson(overlay)
                 .build();
         Toast.makeText(this, "Loading map", Toast.LENGTH_SHORT).show();
         final Double distance = currentRoute.distance() * 0.000621371;
@@ -299,25 +300,23 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
         });
     }
 
-    private void shortenGeoJson() {
+    private LineString shortenGeoJson() {
         JsonObject jsonObject = JsonParser.parseString(routeGeoJson.toJson()).getAsJsonObject();
         final JsonArray coordinatesJsonArray = jsonObject.getAsJsonArray("coordinates");
+        Log.i(TAG,"size is " + coordinatesJsonArray.size());
         while (coordinatesJsonArray.size() >= 100) {
-            for (int i = 0; i < coordinatesJsonArray.size();i+=1) {
+            for (int i = 0;i<coordinatesJsonArray.size();i++) {
                 coordinatesJsonArray.remove(i);
             }
         }
         ArrayList<Point> points = new ArrayList<>();
         for (int i = 0;i < coordinatesJsonArray.size();i++) {
             JsonArray currentSpot = coordinatesJsonArray.get(i).getAsJsonArray();
-            Point newPoint = Point.fromLngLat(currentSpot.get(0).getAsDouble(),currentSpot.get(1).getAsInt());
+            Point newPoint = Point.fromLngLat(currentSpot.get(0).getAsDouble(),currentSpot.get(1).getAsDouble());
             points.add(newPoint);
         }
         LineString lineString = LineString.fromLngLats(points);
-        routeGeoJson = lineString;
-
-
-
+        return lineString;
     }
 
     private void getRoute(final MapboxMap mapboxMap, Point origin) {
@@ -388,9 +387,6 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
     }
 
     private void generateMore(MapboxMap map,Style loadedMapStyle) {
-        if (loadedMapStyle.getSourceAs(ROUTE_SOURCE_ID) == null) {
-            loadedMapStyle.addSource(new GeoJsonSource(ROUTE_SOURCE_ID));
-        }
         if (numPoints == targetNumPoints) {
             getRoute(map,symbol1.getGeometry());
             btnStart.setText(R.string.reset);
