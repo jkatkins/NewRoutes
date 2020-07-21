@@ -552,7 +552,11 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
     //back button
     @Override
     public boolean onSupportNavigateUp() {
-        onBackPressed();
+        if (flSaveRoute.getVisibility() == View.GONE) {
+            onBackPressed();
+        } else {
+            flSaveRoute.setVisibility(View.GONE);
+        }
         return true;
     }
 
