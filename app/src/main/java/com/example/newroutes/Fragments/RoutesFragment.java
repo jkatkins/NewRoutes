@@ -36,10 +36,9 @@ import java.util.List;
 public class RoutesFragment extends Fragment implements RouteInterface {
 
     public static final String TAG = "RoutesFragment";
-    private ArrayList<Route> routes;
-    private RecyclerView rvRoutes;
-    private RoutesAdapter adapter;
-    private FrameLayout flDetailsContainer;
+    public ArrayList<Route> routes;
+    public RecyclerView rvRoutes;
+    public RoutesAdapter adapter;
     FragmentRoutesBinding binding;
 
     public RoutesFragment() {
@@ -63,7 +62,6 @@ public class RoutesFragment extends Fragment implements RouteInterface {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         rvRoutes = binding.rvRoutes;
-        flDetailsContainer = binding.flDetailsContainer;
         routes = new ArrayList<>();
         adapter = new RoutesAdapter(getContext(),routes,this);
         rvRoutes.setAdapter(adapter);

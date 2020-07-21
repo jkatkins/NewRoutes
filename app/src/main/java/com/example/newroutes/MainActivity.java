@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
+import com.example.newroutes.Fragments.HomeFragment;
 import com.example.newroutes.Fragments.ProfileFragment;
 import com.example.newroutes.Fragments.RoutesFragment;
 import com.example.newroutes.databinding.ActivityMainBinding;
@@ -55,7 +56,8 @@ public class MainActivity extends AppCompatActivity {
                         Intent logoutIntent = new Intent(MainActivity.this,LoginActivity.class);
                         startActivity(logoutIntent);
                     case R.id.item_home:
-                        //fragment =
+                        fragment = new HomeFragment();
+                        break;
                     case R.id.item_profile:
                         fragment = new ProfileFragment();
                         break;

@@ -278,9 +278,12 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
             public void onClick(View view) {
                 //save route here
 
-                Route route = new Route();
+                final Route route = new Route();
                 route.setDistance(distance);
                 route.setName(etRouteName.getText().toString());
+                if (etRouteName.getText().toString().isEmpty()) {
+                    route.setName(getString(R.string.unnamed_route));
+                }
                 route.setImageUrl(imageUrl);
                 route.setLinestring(coordinates);
                 route.setUser(ParseUser.getCurrentUser());
@@ -288,10 +291,20 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                     @Override
                     public void done(ParseException e) {
                         if (e == null) {
-                            Toast.makeText(CreateRouteActivity.this, "Route saved successfully", Toast.LENGTH_LONG).show();
-                            flSaveRoute.setVisibility(View.GONE);
+                            ParseUser.getCurrentUser().add("Routes",route);
+                            ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    if (e == null) {
+                                        Toast.makeText(CreateRouteActivity.this, R.string.route_saved, Toast.LENGTH_LONG).show();
+                                        flSaveRoute.setVisibility(View.GONE);
+                                    } else {
+                                        Toast.makeText(CreateRouteActivity.this, R.string.route_failed, Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
                         } else {
-                            Toast.makeText(CreateRouteActivity.this, "Route save failed," + e, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(CreateRouteActivity.this, R.string.route_failed, Toast.LENGTH_SHORT).show();
                             Log.e(TAG,e.toString());
                         }
                     }
@@ -324,7 +337,7 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                 .origin(origin)
                 .destination(origin)
                 .alternatives(true)
-                .overview(DirectionsCriteria.OVERVIEW_FULL)
+                .overview(DirectionsCriteria.OVERVIEW_SIMPLIFIED)
                 .profile(DirectionsCriteria.PROFILE_WALKING)
                 .accessToken(getString(R.string.mapbox_access_token));
 

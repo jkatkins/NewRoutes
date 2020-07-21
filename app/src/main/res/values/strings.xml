@@ -13,4 +13,7 @@
     <string name="choose_origin">Choose origin</string>
     <string name="invalid_start">Sorry, you can\'t start there</string>
     <string name="reset">Reset</string>
+    <string name="route_saved">Route saved successfully</string>
+    <string name="route_failed">Unable to save route</string>
+    <string name="unnamed_route">Unnamed Route</string>
 </resources>

@@ -48,7 +48,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="$USER_HOME$/Downloads/failedload.png" />
+                                                <entry key="imagePath" value="$USER_HOME$/Desktop/RouteExampleImage.png" />
                                                 <entry key="opacityPercent" value="80" />
                                               </map>
                                             </option>
@@ -81,8 +81,9 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="imageAsset" value="$USER_HOME$/Downloads/failedload.png" />
-                                      <entry key="outputName" value="ic_profile" />
+                                      <entry key="assetType" value="IMAGE" />
+                                      <entry key="imageAsset" value="$USER_HOME$/Desktop/RouteExampleImage.png" />
+                                      <entry key="outputName" value="ic_sample_route" />
                                       <entry key="theme" value="CUSTOM" />
                                       <entry key="themeColor" value="000000" />
                                     </map>

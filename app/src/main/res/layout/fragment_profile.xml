@@ -7,55 +7,15 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <FrameLayout
-        android:id="@+id/flProfileFragments"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/rlProfileTop"
-        android:layout_marginTop="0dp">
-
-    </FrameLayout>
-
     <RelativeLayout
         android:id="@+id/rlProfileTop"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="match_parent"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginStart="0dp"
         android:layout_marginTop="0dp"
         android:background="#9A9A9A">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="0dp"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/btnFavorites"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Favorites" />
-
-            <Button
-                android:id="@+id/btnFriends"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Friends" />
-
-            <Button
-                android:id="@+id/btnRecomended"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Recomended" />
-        </LinearLayout>
 
         <TextView
             android:id="@+id/tvUsername"

@@ -74,13 +74,8 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        btnMap = binding.btnFavorites;
-        btnRoutes = binding.btnFriends;
-        btnRecent = binding.btnRecomended;
         tvUsername = binding.tvUsername;
         ivProfilePic = binding.ivProfilePic;
-        flProfileFragments = binding.flProfileFragments;
 
         //Fill with data
         ParseUser user = ParseUser.getCurrentUser();
