@@ -1,5 +1,6 @@
 package com.example.newroutes.Fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ import android.widget.RelativeLayout;
 import com.example.newroutes.MainActivity;
 import com.example.newroutes.R;
 import com.example.newroutes.Route;
+import com.example.newroutes.RouteDetailsActivity;
 import com.example.newroutes.RouteInterface;
 import com.example.newroutes.RoutesAdapter;
 import com.example.newroutes.databinding.FragmentRoutesBinding;
@@ -90,12 +92,8 @@ public class RoutesFragment extends Fragment implements RouteInterface {
 
     @Override
     public void onRouteSelected(Route route) {
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-        RouteDetailsFragment fragment = new RouteDetailsFragment();
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("Route", Parcels.wrap(route));
-        fragment.setArguments(bundle);
-        fragmentManager.beginTransaction().replace(flDetailsContainer.getId(),fragment).commit();
-        flDetailsContainer.setVisibility(View.VISIBLE);
+        Intent i = new Intent (getContext(), RouteDetailsActivity.class);
+        i.putExtra("Route",Parcels.wrap(route));
+        startActivity(i);
     }
 }

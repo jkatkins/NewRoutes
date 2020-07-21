@@ -11,14 +11,25 @@
     android:layout_marginTop="0dp"
     android:visibility="visible">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.mapbox.mapboxsdk.maps.MapView
         android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/cvOptions"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/cvInfoContainer"
+        android:layout_below="@+id/toolbar"
         android:layout_marginTop="0dp"
-        android:layout_marginBottom="-1dp"
+        android:layout_marginBottom="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
