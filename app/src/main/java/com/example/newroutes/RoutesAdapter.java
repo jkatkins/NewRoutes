@@ -1,6 +1,7 @@
 package com.example.newroutes;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,9 +10,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.newroutes.Fragments.RouteDetailsFragment;
+import com.example.newroutes.Fragments.RoutesFragment;
 import com.parse.ParseException;
 
 import java.text.DecimalFormat;
@@ -21,11 +25,13 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.ViewHolder
 
     private Context context;
     private ArrayList<Route> routes;
+    private RouteInterface routeInterface;
 
 
-    public RoutesAdapter(Context context, ArrayList<Route> routes) {
+    public RoutesAdapter(Context context, ArrayList<Route> routes,RouteInterface routeInterface) {
         this.context = context;
         this.routes = routes;
+        this.routeInterface = routeInterface;
     }
 
     @NonNull
@@ -51,12 +57,20 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.ViewHolder
         ImageView ivMap;
         TextView tvRouteName;
         TextView tvDistance;
+        Route route;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ivMap = itemView.findViewById(R.id.ivMap);
             tvRouteName = itemView.findViewById(R.id.tvRouteName);
             tvDistance = itemView.findViewById(R.id.tvDistance);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    //TODO implement an interface
+                    routeInterface.onRouteSelected(route);
+                }
+            });
         }
 
         public void bind(Route route) {
@@ -66,6 +80,7 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.ViewHolder
             tvRouteName.setText(route.getName());
             String imageUrl = route.getImageUrl();
             Glide.with(context).load(imageUrl).into(ivMap);
+            this.route = route;
         }
     }
 }

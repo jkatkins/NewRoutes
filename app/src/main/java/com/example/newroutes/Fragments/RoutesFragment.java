@@ -5,6 +5,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -12,24 +13,31 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
+import com.example.newroutes.MainActivity;
 import com.example.newroutes.R;
 import com.example.newroutes.Route;
+import com.example.newroutes.RouteInterface;
 import com.example.newroutes.RoutesAdapter;
 import com.example.newroutes.databinding.FragmentRoutesBinding;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 
+import org.parceler.Parcels;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class RoutesFragment extends Fragment {
+public class RoutesFragment extends Fragment implements RouteInterface {
 
     public static final String TAG = "RoutesFragment";
     private ArrayList<Route> routes;
     private RecyclerView rvRoutes;
     private RoutesAdapter adapter;
+    private FrameLayout flDetailsContainer;
     FragmentRoutesBinding binding;
 
     public RoutesFragment() {
@@ -53,8 +61,9 @@ public class RoutesFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         rvRoutes = binding.rvRoutes;
+        flDetailsContainer = binding.flDetailsContainer;
         routes = new ArrayList<>();
-        adapter = new RoutesAdapter(getContext(),routes);
+        adapter = new RoutesAdapter(getContext(),routes,this);
         rvRoutes.setAdapter(adapter);
         rvRoutes.setLayoutManager(new GridLayoutManager(getContext(),2));
         queryRoutes();
@@ -77,5 +86,16 @@ public class RoutesFragment extends Fragment {
                 adapter.notifyDataSetChanged();
             }
         });
+    }
+
+    @Override
+    public void onRouteSelected(Route route) {
+        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+        RouteDetailsFragment fragment = new RouteDetailsFragment();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("Route", Parcels.wrap(route));
+        fragment.setArguments(bundle);
+        fragmentManager.beginTransaction().replace(flDetailsContainer.getId(),fragment).commit();
+        flDetailsContainer.setVisibility(View.VISIBLE);
     }
 }

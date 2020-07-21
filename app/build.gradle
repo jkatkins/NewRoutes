@@ -54,6 +54,10 @@ dependencies {
     //Navigation Drawer dependencies
     implementation "com.google.android.material:material:${designSupportVersion}"
 
+    //Parcel dependencies
+    implementation 'org.parceler:parceler-api:1.1.12'
+    annotationProcessor 'org.parceler:parceler:1.1.12'
+
 
 
 
