@@ -6,24 +6,28 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.FrameLayout;
 
-import com.example.newroutes.R;
 import com.example.newroutes.databinding.FragmentHomeBinding;
+import com.google.android.material.tabs.TabLayout;
+
+import java.util.ArrayList;
 
 public class HomeFragment extends Fragment {
 
 
-    private Button btnFriends;
-    private Button btnRoutes;
-    private FrameLayout flHomeContainer;
+    private TabLayout tlTabs;
+    private ViewPager vpPager;
     FragmentHomeBinding binding;
+
+    private HomeRoutesFragment homeRoutesFragment;
+    private HomeFriendsFragment homeFriendsFragment;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -47,17 +51,52 @@ public class HomeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        vpPager = binding.vpPager;
+        tlTabs = binding.tlTabs;
 
-        btnFriends = binding.btnFriends;
-        btnRoutes = binding.btnRoutes;
-        flHomeContainer = binding.flHomeContainer;
-        btnRoutes.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View view) {
-               Log.i("homeroutes","Routes was clicked");
-               FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-               fragmentManager.beginTransaction().replace(flHomeContainer.getId(),new HomeRoutesFragment()).commit();
-           }
-       });
+        homeRoutesFragment = new HomeRoutesFragment();
+        homeFriendsFragment = new HomeFriendsFragment();
+
+        tlTabs.setupWithViewPager(vpPager);
+
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager(),0);
+        vpPager.setAdapter(adapter);
+        adapter.addFragment(homeRoutesFragment,"Routes");
+        adapter.addFragment(homeFriendsFragment,"Friends");
     }
+
+    private class ViewPagerAdapter extends FragmentPagerAdapter {
+
+        private ArrayList<Fragment> fragments = new ArrayList<>();
+        private ArrayList<String> fragmentTitle = new ArrayList<>();
+
+        public ViewPagerAdapter(@NonNull FragmentManager fm, int behavior) {
+            super(fm, behavior);
+        }
+
+        public void addFragment(Fragment fragment,String title) {
+            fragments.add(fragment);
+            fragmentTitle.add(title);
+            notifyDataSetChanged();
+        }
+
+        @NonNull
+        @Override
+        public Fragment getItem(int position) {
+            return fragments.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return fragments.size();
+        }
+
+        @Nullable
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return fragmentTitle.get(position);
+        }
+    }
+
+
 }
