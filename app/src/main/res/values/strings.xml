@@ -16,4 +16,5 @@
     <string name="route_saved">Route saved successfully</string>
     <string name="route_failed">Unable to save route</string>
     <string name="unnamed_route">Unnamed Route</string>
+    <string name="routes_created">"Routes Created: "</string>
 </resources>

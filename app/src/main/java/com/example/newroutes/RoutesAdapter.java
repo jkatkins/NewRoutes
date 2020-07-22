@@ -38,7 +38,7 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.ViewHolder
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Route route = routes.get(position);
-            holder.bind(route);
+        holder.bind(route);
     }
 
     @Override

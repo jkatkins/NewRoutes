@@ -28,7 +28,7 @@ public class HomeRoutesFragment extends RoutesFragment{
     @Override
     protected void queryRoutes() {
         try {
-            ParseUser currentUser = ParseUser.getCurrentUser().fetch();
+            ParseUser currentUser = ParseUser.getCurrentUser();
             ArrayList<Route> userRoutes = (ArrayList<Route>)currentUser.get("Routes");
             if (userRoutes == null) {
                 return;
@@ -37,6 +37,7 @@ public class HomeRoutesFragment extends RoutesFragment{
                 route = route.fetch();
                 routes.add(route);
             }
+            adapter.notifyDataSetChanged();
         } catch (ParseException e) {
             //TODO add error handling
         }
