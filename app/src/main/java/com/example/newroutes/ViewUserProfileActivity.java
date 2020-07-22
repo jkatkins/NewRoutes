@@ -7,17 +7,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.newroutes.Adapters.RoutesAdapter;
+import com.example.newroutes.ParseObjects.Route;
 import com.example.newroutes.databinding.ActivityViewUserProfileBinding;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
 import org.parceler.Parcels;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 

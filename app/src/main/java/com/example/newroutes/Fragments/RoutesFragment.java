@@ -6,7 +6,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,15 +13,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
 
-import com.example.newroutes.MainActivity;
-import com.example.newroutes.R;
-import com.example.newroutes.Route;
+import com.example.newroutes.ParseObjects.Route;
 import com.example.newroutes.RouteDetailsActivity;
 import com.example.newroutes.RouteInterface;
-import com.example.newroutes.RoutesAdapter;
+import com.example.newroutes.Adapters.RoutesAdapter;
 import com.example.newroutes.databinding.FragmentRoutesBinding;
 import com.parse.FindCallback;
 import com.parse.ParseException;

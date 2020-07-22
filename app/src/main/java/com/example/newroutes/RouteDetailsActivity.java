@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import com.example.newroutes.ParseObjects.Route;
 import com.example.newroutes.databinding.ActivityRouteDetailsBinding;
 import com.mapbox.geojson.LineString;
 import com.mapbox.geojson.Point;

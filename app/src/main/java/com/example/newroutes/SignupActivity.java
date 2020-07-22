@@ -10,10 +10,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.newroutes.ParseObjects.FriendsManager;
 import com.example.newroutes.databinding.ActivitySignupBinding;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 
 public class SignupActivity extends AppCompatActivity {
@@ -57,17 +59,28 @@ public class SignupActivity extends AppCompatActivity {
         } else if (!(password.equals(confirmPassword))) {
             Toast.makeText(this, R.string.passowrd_mismatch, Toast.LENGTH_SHORT).show();
         } else {
-            ParseUser user = new ParseUser();
+            final ParseUser user = new ParseUser();
             // Set core properties
             user.setUsername(username);
             user.setPassword(password);
-            user.signUpInBackground(new SignUpCallback() {
+            final FriendsManager friendsManager = new FriendsManager();
+            friendsManager.saveInBackground(new SaveCallback() {
+                @Override
                 public void done(ParseException e) {
                     if (e == null) {
-                        Toast.makeText(SignupActivity.this, "Account Created", Toast.LENGTH_SHORT).show();
-                        Intent i = new Intent(SignupActivity.this,MainActivity.class);
-                        i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(i);
+                        user.put("FriendsManager",friendsManager);
+                        user.signUpInBackground(new SignUpCallback() {
+                            public void done(ParseException e) {
+                                if (e == null) {
+                                    Toast.makeText(SignupActivity.this, "Account Created", Toast.LENGTH_SHORT).show();
+                                    Intent i = new Intent(SignupActivity.this,MainActivity.class);
+                                    i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    startActivity(i);
+                                } else {
+                                    Toast.makeText(SignupActivity.this, "Error signing up, " + e, Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
                     } else {
                         Toast.makeText(SignupActivity.this, "Error signing up, " + e, Toast.LENGTH_SHORT).show();
                     }

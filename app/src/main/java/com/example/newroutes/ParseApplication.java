@@ -2,10 +2,10 @@ package com.example.newroutes;
 
 import android.app.Application;
 
+import com.example.newroutes.ParseObjects.FriendsManager;
+import com.example.newroutes.ParseObjects.Route;
 import com.parse.Parse;
 import com.parse.ParseObject;
-
-import okhttp3.OkHttpClient;
 
 public class ParseApplication extends Application {
     @Override
@@ -13,6 +13,7 @@ public class ParseApplication extends Application {
         super.onCreate();
 
         ParseObject.registerSubclass(Route.class);
+        ParseObject.registerSubclass(FriendsManager.class);
 
         // set applicationId, and server server based on the values in the Heroku settings.
         // clientKey is not needed unless explicitly configured

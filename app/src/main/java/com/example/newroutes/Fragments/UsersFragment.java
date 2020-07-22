@@ -13,9 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.newroutes.R;
-import com.example.newroutes.Route;
-import com.example.newroutes.UsersAdapter;
+import com.example.newroutes.ParseObjects.Route;
+import com.example.newroutes.Adapters.UsersAdapter;
 import com.example.newroutes.databinding.FragmentUsersBinding;
 import com.parse.FindCallback;
 import com.parse.ParseException;
