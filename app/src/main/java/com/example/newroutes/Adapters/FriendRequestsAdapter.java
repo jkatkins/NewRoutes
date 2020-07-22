@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.newroutes.ParseObjects.FriendsManager;
 import com.example.newroutes.ParseObjects.Route;
 import com.example.newroutes.R;
 import com.parse.ParseUser;
@@ -66,12 +67,18 @@ public class FriendRequestsAdapter extends RecyclerView.Adapter<FriendRequestsAd
                 @Override
                 public void onClick(View view) {
                     //TODO
+                    FriendsManager currentFriendsManager = ((FriendsManager)ParseUser.getCurrentUser().get("FriendsManager"));
+
+                    friendRequests.remove(getAdapterPosition());
+                    notifyItemRemoved(getAdapterPosition());
                 }
             });
             btnDecline.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     //TODO
+                    friendRequests.remove(getAdapterPosition());
+                    notifyItemRemoved(getAdapterPosition());
                 }
             });
         }

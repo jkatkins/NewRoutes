@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
-import androidx.viewpager2.widget.ViewPager2;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +26,7 @@ public class HomeFragment extends Fragment {
     FragmentHomeBinding binding;
 
     private HomeRoutesFragment homeRoutesFragment;
+    private HomeFriendRequestsFragment homeFriendRequestsFragment;
     private HomeFriendsFragment homeFriendsFragment;
 
     public HomeFragment() {
@@ -55,13 +55,16 @@ public class HomeFragment extends Fragment {
         tlTabs = binding.tlTabs;
 
         homeRoutesFragment = new HomeRoutesFragment();
+        homeFriendRequestsFragment = new HomeFriendRequestsFragment();
         homeFriendsFragment = new HomeFriendsFragment();
+
 
         tlTabs.setupWithViewPager(vpPager);
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager(),0);
         vpPager.setAdapter(adapter);
         adapter.addFragment(homeRoutesFragment,"Routes");
+        adapter.addFragment(homeFriendRequestsFragment,"Friend Requests");
         adapter.addFragment(homeFriendsFragment,"Friends");
     }
 

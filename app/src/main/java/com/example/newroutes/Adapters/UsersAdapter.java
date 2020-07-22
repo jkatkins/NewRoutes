@@ -29,12 +29,14 @@ import java.util.ArrayList;
 public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
 
     public static final String TAG = "UsersAdapter";
+    public boolean displayButton;
     Context context;
     ArrayList<ParseUser> users;
 
-    public UsersAdapter(Context context, ArrayList<ParseUser> users) {
+    public UsersAdapter(Context context, ArrayList<ParseUser> users,boolean displayButton) {
         this.context = context;
         this.users = users;
+        this.displayButton = displayButton;
     }
 
     @NonNull
@@ -47,7 +49,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ParseUser newUser = users.get(position);
-        holder.bind(newUser);
+        holder.bind(newUser,displayButton);
     }
 
     @Override
@@ -92,7 +94,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
             });
         }
 
-        public void bind(ParseUser newUser) {
+        public void bind(ParseUser newUser,boolean displayButton) {
             tvUsername.setText(newUser.getUsername());
             Glide.with(context).load(newUser.getParseFile("Picture").getUrl()).into(ivProfilePicture);
             this.user = newUser;
@@ -100,6 +102,9 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
                 tvNumRoutes.setText("Routes Created: 0"); //TODO Figure out how concatenation with string resources works
             } else {
                 tvNumRoutes.setText("Routes Created: " + ((ArrayList<Route>) newUser.get("Routes")).size());
+            }
+            if (!displayButton) {
+                btnAddFriend.setVisibility(View.INVISIBLE);
             }
         }
     }

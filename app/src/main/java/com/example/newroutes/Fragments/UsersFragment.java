@@ -28,9 +28,9 @@ import java.util.List;
 public class UsersFragment extends Fragment {
 
     public static final String TAG = "UsersFragment";
-    private RecyclerView rvUsers;
-    private UsersAdapter adapter;
-    private ArrayList<ParseUser> users;
+    public RecyclerView rvUsers;
+    public UsersAdapter adapter;
+    public ArrayList<ParseUser> users;
     FragmentUsersBinding binding;
 
 
@@ -58,13 +58,13 @@ public class UsersFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         rvUsers = binding.rvUsers;
         users = new ArrayList<>();
-        adapter = new UsersAdapter(getContext(),users);
+        adapter = new UsersAdapter(getContext(),users,true);
         rvUsers.setAdapter(adapter);
         rvUsers.setLayoutManager(new LinearLayoutManager(getContext()));
         queryUsers();
     }
 
-    private void queryUsers() {
+    public void queryUsers() {
         Log.i(TAG,"Query users");
         ParseQuery<ParseUser> query = ParseUser.getQuery();
         query.include(Route.KEY_USER);
