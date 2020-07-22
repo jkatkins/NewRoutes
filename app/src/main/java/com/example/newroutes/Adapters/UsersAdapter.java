@@ -98,9 +98,9 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
             this.user = newUser;
             if (newUser.get("Routes") == null) {
                 tvNumRoutes.setText("Routes Created: 0"); //TODO Figure out how concatenation with string resources works
-                return;
+            } else {
+                tvNumRoutes.setText("Routes Created: " + ((ArrayList<Route>) newUser.get("Routes")).size());
             }
-            tvNumRoutes.setText("Routes Created: " + ((ArrayList<Route>)newUser.get("Routes")).size());
         }
     }
 }
