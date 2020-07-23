@@ -1,6 +1,7 @@
 package com.example.newroutes.Adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,12 +16,16 @@ import com.bumptech.glide.Glide;
 import com.example.newroutes.ParseObjects.FriendsManager;
 import com.example.newroutes.ParseObjects.Route;
 import com.example.newroutes.R;
+import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 
 public class FriendRequestsAdapter extends RecyclerView.Adapter<FriendRequestsAdapter.ViewHolder> {
 
+    public static final String TAG = "FriendRequestAdapter";
     private ArrayList<ParseUser> friendRequests;
     private Context context;
 
@@ -67,18 +72,63 @@ public class FriendRequestsAdapter extends RecyclerView.Adapter<FriendRequestsAd
                 @Override
                 public void onClick(View view) {
                     //TODO
-                    FriendsManager currentFriendsManager = ((FriendsManager)ParseUser.getCurrentUser().get("FriendsManager"));
-
-                    friendRequests.remove(getAdapterPosition());
-                    notifyItemRemoved(getAdapterPosition());
+                    try {
+                        ParseUser currentUser = ParseUser.getCurrentUser();
+                        FriendsManager currentFriendsManager = ((FriendsManager)currentUser.get("FriendsManager")).fetch();
+                        currentFriendsManager.addFriend(user);
+                        currentFriendsManager.removeIncoming(user);
+                        currentFriendsManager.saveInBackground();
+                        FriendsManager senderFriendsManager = ((FriendsManager)user.get("FriendsManager")).fetch();
+                        senderFriendsManager.addFriend(currentUser);
+                        senderFriendsManager.removeOutgoing(currentUser);
+                        senderFriendsManager.saveInBackground();
+                        //ParseUser.getCurrentUser().put("FriendsManager",currentFriendsManager);
+                        //ParseUser.getCurrentUser().saveInBackground();//TODO Error handling
+                        //user.put("FriendsManager",senderFriendsManager);
+                        //user.saveInBackground();
+                        friendRequests.remove(getAdapterPosition());
+                        notifyItemRemoved(getAdapterPosition());
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                 }
             });
             btnDecline.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     //TODO
-                    friendRequests.remove(getAdapterPosition());
-                    notifyItemRemoved(getAdapterPosition());
+                    try {
+                        ParseUser currentUser = ParseUser.getCurrentUser();
+                        FriendsManager senderFriendsManager = ((FriendsManager)user.get("FriendsManager")).fetchIfNeeded();
+                        senderFriendsManager.removeOutgoing(currentUser);
+                        FriendsManager currentFriendsManager = ((FriendsManager)currentUser.get("FriendsManager")).fetchIfNeeded();
+                        currentFriendsManager.removeIncoming(user);
+                        senderFriendsManager.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                if (e == null) {
+                                    Log.i(TAG,"save success");
+                                } else {
+                                    Log.e(TAG,e.toString());
+                                }
+                            }
+                        });
+                        currentFriendsManager.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                if (e == null) {
+                                    Log.i(TAG,"save success");
+                                } else {
+                                    Log.e(TAG,e.toString());
+                                }
+                            }
+                        });
+                        friendRequests.remove(getAdapterPosition());
+                        notifyItemRemoved(getAdapterPosition());
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+
                 }
             });
         }

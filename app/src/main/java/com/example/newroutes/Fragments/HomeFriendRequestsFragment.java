@@ -71,7 +71,7 @@ public class HomeFriendRequestsFragment extends Fragment {
 
     private void queryRequests() throws ParseException {
         Log.i(TAG,"query requests");
-        FriendsManager friendsManager = ((FriendsManager)ParseUser.getCurrentUser().get("FriendsManager")).fetch();
+        FriendsManager friendsManager = ((FriendsManager)ParseUser.getCurrentUser().get("FriendsManager")).fetchIfNeeded();
         ArrayList<ParseUser> incomingRequests = (ArrayList<ParseUser>) friendsManager.get("IncomingRequests");
         if (incomingRequests == null || incomingRequests.size() == 0) {
             return;

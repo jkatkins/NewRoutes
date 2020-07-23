@@ -236,6 +236,7 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
         loadedMapStyle.addSource(new GeoJsonSource(ROUTE_SOURCE_ID));
     }
 
+
     private void SaveRoute() {
         flSaveRoute.setVisibility(View.VISIBLE);
         LineString overlay = shortenGeoJson();
@@ -312,6 +313,9 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
         });
     }
 
+    /* MapBox geojsons in static maps have a limit of 100 coordinates, this method continues to
+       cut the geojson saved under routeGeoJson in half by removing every other coordinate,
+       until its size is under 100. */
     private LineString shortenGeoJson() {
         JsonObject jsonObject = JsonParser.parseString(routeGeoJson.toJson()).getAsJsonObject();
         final JsonArray coordinatesJsonArray = jsonObject.getAsJsonArray("coordinates");

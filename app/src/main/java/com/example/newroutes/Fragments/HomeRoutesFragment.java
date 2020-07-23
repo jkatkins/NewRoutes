@@ -2,9 +2,11 @@ package com.example.newroutes.Fragments;
 
 import com.example.newroutes.ParseObjects.Route;
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class HomeRoutesFragment extends RoutesFragment{
@@ -13,14 +15,12 @@ public class HomeRoutesFragment extends RoutesFragment{
     protected void queryRoutes() {
         try {
             ParseUser currentUser = ParseUser.getCurrentUser();
-            ArrayList<Route> userRoutes = (ArrayList<Route>)currentUser.get("Routes");
+            List<Route> userRoutes = (ArrayList<Route>)currentUser.get("Routes");
             if (userRoutes == null) {
                 return;
             }
-            for (Route route : userRoutes) {
-                route = route.fetch();
-                routes.add(route);
-            }
+            userRoutes = ParseObject.fetchAll(userRoutes);
+            routes.addAll(userRoutes);
             adapter.notifyDataSetChanged();
         } catch (ParseException e) {
             //TODO add error handling
