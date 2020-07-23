@@ -82,10 +82,6 @@ public class FriendRequestsAdapter extends RecyclerView.Adapter<FriendRequestsAd
                         senderFriendsManager.addFriend(currentUser);
                         senderFriendsManager.removeOutgoing(currentUser);
                         senderFriendsManager.saveInBackground();
-                        //ParseUser.getCurrentUser().put("FriendsManager",currentFriendsManager);
-                        //ParseUser.getCurrentUser().saveInBackground();//TODO Error handling
-                        //user.put("FriendsManager",senderFriendsManager);
-                        //user.saveInBackground();
                         friendRequests.remove(getAdapterPosition());
                         notifyItemRemoved(getAdapterPosition());
                     } catch (ParseException e) {
@@ -103,26 +99,8 @@ public class FriendRequestsAdapter extends RecyclerView.Adapter<FriendRequestsAd
                         senderFriendsManager.removeOutgoing(currentUser);
                         FriendsManager currentFriendsManager = ((FriendsManager)currentUser.get("FriendsManager")).fetchIfNeeded();
                         currentFriendsManager.removeIncoming(user);
-                        senderFriendsManager.saveInBackground(new SaveCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                if (e == null) {
-                                    Log.i(TAG,"save success");
-                                } else {
-                                    Log.e(TAG,e.toString());
-                                }
-                            }
-                        });
-                        currentFriendsManager.saveInBackground(new SaveCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                if (e == null) {
-                                    Log.i(TAG,"save success");
-                                } else {
-                                    Log.e(TAG,e.toString());
-                                }
-                            }
-                        });
+                        senderFriendsManager.saveInBackground();
+                        currentFriendsManager.saveInBackground();  //TODO Error handling
                         friendRequests.remove(getAdapterPosition());
                         notifyItemRemoved(getAdapterPosition());
                     } catch (ParseException e) {

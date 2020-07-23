@@ -19,6 +19,7 @@ import com.example.newroutes.R;
 import com.example.newroutes.databinding.FragmentHomeFriendRequestsBinding;
 import com.example.newroutes.databinding.FragmentHomeFriendsBinding;
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ import java.util.List;
 public class HomeFriendRequestsFragment extends Fragment {
 
 
-    public static final String TAG = "HomeFriendsFragment";
+    public static final String TAG = "HomeFriendRequestsFrag";
     private RecyclerView rvFriendRequests;
     private FriendRequestsAdapter adapter;
     private ArrayList<ParseUser> friendRequests;
@@ -76,10 +77,8 @@ public class HomeFriendRequestsFragment extends Fragment {
         if (incomingRequests == null || incomingRequests.size() == 0) {
             return;
         }
-        for (ParseUser userRequest : incomingRequests) {
-            userRequest = userRequest.fetch();
-            friendRequests.add(userRequest);
-        }
+        ParseObject.fetchAll(incomingRequests);
+        friendRequests.addAll(incomingRequests);
         adapter.notifyDataSetChanged();
     }
 }

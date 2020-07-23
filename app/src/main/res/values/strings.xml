@@ -17,4 +17,6 @@
     <string name="route_failed">Unable to save route</string>
     <string name="unnamed_route">Unnamed Route</string>
     <string name="routes_created">"Routes Created: "</string>
+    <string name="friends">Friends</string>
+    <string name="request_sent">Request Sent</string>
 </resources>

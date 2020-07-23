@@ -29,14 +29,16 @@ import java.util.ArrayList;
 public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
 
     public static final String TAG = "UsersAdapter";
-    public boolean displayButton;
     Context context;
     ArrayList<ParseUser> users;
+    ArrayList<ParseUser> friends;
+    ArrayList<ParseUser> outgoingRequests;
 
-    public UsersAdapter(Context context, ArrayList<ParseUser> users,boolean displayButton) {
+    public UsersAdapter(Context context, ArrayList<ParseUser> users,ArrayList<ParseUser> friends,ArrayList<ParseUser> outgoingRequests) {
         this.context = context;
         this.users = users;
-        this.displayButton = displayButton;
+        this.friends = friends;
+        this.outgoingRequests = outgoingRequests;
     }
 
     @NonNull
@@ -49,7 +51,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ParseUser newUser = users.get(position);
-        holder.bind(newUser,displayButton);
+        holder.bind(newUser);
     }
 
     @Override
@@ -94,7 +96,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
             });
         }
 
-        public void bind(ParseUser newUser,boolean displayButton) {
+        public void bind(ParseUser newUser) {
             tvUsername.setText(newUser.getUsername());
             Glide.with(context).load(newUser.getParseFile("Picture").getUrl()).into(ivProfilePicture);
             this.user = newUser;
@@ -103,8 +105,21 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
             } else {
                 tvNumRoutes.setText("Routes Created: " + ((ArrayList<Route>) newUser.get("Routes")).size());
             }
-            if (!displayButton) {
-                btnAddFriend.setVisibility(View.INVISIBLE);
+            if (friends != null && friends.size() > 0) {
+                for (ParseUser friend : friends) {
+                    if (friend.getObjectId().equals(newUser.getObjectId())) {
+                        btnAddFriend.setText(R.string.friends);
+                        btnAddFriend.setClickable(false);
+                    }
+                }
+            }
+            if (outgoingRequests != null && outgoingRequests.size() > 0) {
+                for (ParseUser request : outgoingRequests) {
+                    if (request.getObjectId().equals(newUser.getObjectId())) {
+                        btnAddFriend.setText(R.string.request_sent);
+                        btnAddFriend.setClickable(false);
+                    }
+                }
             }
         }
     }

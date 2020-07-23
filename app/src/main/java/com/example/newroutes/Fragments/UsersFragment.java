@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.newroutes.ParseObjects.FriendsManager;
 import com.example.newroutes.ParseObjects.Route;
 import com.example.newroutes.Adapters.UsersAdapter;
 import com.example.newroutes.databinding.FragmentUsersBinding;
@@ -31,6 +32,8 @@ public class UsersFragment extends Fragment {
     public RecyclerView rvUsers;
     public UsersAdapter adapter;
     public ArrayList<ParseUser> users;
+    public ArrayList<ParseUser> friends;
+    public ArrayList<ParseUser> outgoingRequests;
     FragmentUsersBinding binding;
 
 
@@ -58,7 +61,16 @@ public class UsersFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         rvUsers = binding.rvUsers;
         users = new ArrayList<>();
-        adapter = new UsersAdapter(getContext(),users,true);
+        friends = new ArrayList<>();
+        outgoingRequests = new ArrayList<>();
+        try {
+            FriendsManager friendsManager = ((FriendsManager) ParseUser.getCurrentUser().get("FriendsManager")).fetchIfNeeded();
+            friends = friendsManager.getFriends();
+            outgoingRequests = friendsManager.getOutgoing();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        adapter = new UsersAdapter(getContext(),users,friends,outgoingRequests);
         rvUsers.setAdapter(adapter);
         rvUsers.setLayoutManager(new LinearLayoutManager(getContext()));
         queryUsers();
@@ -68,6 +80,7 @@ public class UsersFragment extends Fragment {
         Log.i(TAG,"Query users");
         ParseQuery<ParseUser> query = ParseUser.getQuery();
         query.include(Route.KEY_USER);
+        query.whereNotEqualTo("objectId",ParseUser.getCurrentUser().getObjectId());
         query.setLimit(20);
         query.findInBackground(new FindCallback<ParseUser>() {
             @Override
