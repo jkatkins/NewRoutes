@@ -24,6 +24,7 @@ import com.example.newroutes.databinding.FragmentHomeFriendRequestsBinding;
 import com.example.newroutes.databinding.FragmentHomeFriendsBinding;
 import com.example.newroutes.databinding.FragmentRoutesBinding;
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
@@ -76,22 +77,27 @@ public class HomeFriendsFragment extends Fragment {
 
     public void queryUsers() throws ParseException {
         Log.i(TAG,"query requestss");
-        FriendsManager friendsManager = ((FriendsManager) ParseUser.getCurrentUser().get("FriendsManager")).fetchIfNeeded();
-        ArrayList<ParseUser> friends = (ArrayList<ParseUser>) friendsManager.get("Friends");
-        if (friends == null || friends.size() == 0) {
-            return;
-        }
-        ParseObject.fetchAllInBackground(friends, new FindCallback<ParseUser>() {
+        ((FriendsManager) ParseUser.getCurrentUser().get("FriendsManager")).fetchInBackground(new GetCallback<ParseObject>() {
             @Override
-            public void done(List<ParseUser> objects, ParseException e) {
-                if (e == null) {
-                    allFriends.clear();
-                    allFriends.addAll(objects);
-                    adapter.notifyDataSetChanged();
-                    Log.i(TAG,"query success!");
-                } else {
-                    Log.e(TAG,e.toString());
+            public void done(ParseObject object, ParseException e) {
+                FriendsManager friendsManager = (FriendsManager) object;
+                ArrayList<ParseUser> friends = (ArrayList<ParseUser>) friendsManager.get("Friends");
+                if (friends == null || friends.size() == 0) {
+                    return;
                 }
+                ParseObject.fetchAllInBackground(friends, new FindCallback<ParseUser>() {
+                    @Override
+                    public void done(List<ParseUser> objects, ParseException e) {
+                        if (e == null) {
+                            allFriends.clear();
+                            allFriends.addAll(objects);
+                            adapter.notifyDataSetChanged();
+                            Log.i(TAG,"query success!");
+                        } else {
+                            Log.e(TAG,e.toString());
+                        }
+                    }
+                });
             }
         });
     }

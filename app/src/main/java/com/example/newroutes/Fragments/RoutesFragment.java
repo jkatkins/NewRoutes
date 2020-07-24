@@ -1,6 +1,7 @@
 package com.example.newroutes.Fragments;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -69,6 +70,7 @@ public class RoutesFragment extends Fragment implements RouteInterface {
         rvRoutes.setLayoutManager(new GridLayoutManager(getContext(),2));
         queryRoutes();
     }
+
 
     protected void queryRoutes() {
         ParseQuery<Route> query = ParseQuery.getQuery(Route.class);
