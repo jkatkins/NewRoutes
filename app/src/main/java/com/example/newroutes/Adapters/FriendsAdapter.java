@@ -27,7 +27,7 @@ import java.util.ArrayList;
 public class FriendsAdapter extends RecyclerView.Adapter<FriendsAdapter.ViewHolder> {
 
     Context context;
-    ArrayList<ParseUser> friends;
+    public ArrayList<ParseUser> friends;
 
     public FriendsAdapter(Context context, ArrayList<ParseUser> friends) {
         this.context = context;

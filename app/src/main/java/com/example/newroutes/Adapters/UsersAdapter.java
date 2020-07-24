@@ -84,6 +84,8 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
             btnAddFriend.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    btnAddFriend.setClickable(false);
+                    btnAddFriend.setText(R.string.request_sent);
                     ParseUser currentUser = ParseUser.getCurrentUser();
                     FriendsManager friendsManagerCurrent = (FriendsManager) currentUser.get("FriendsManager");
                     FriendsManager friendsManagerRecipient = (FriendsManager) user.get("FriendsManager");
@@ -105,9 +107,13 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
             } else {
                 tvNumRoutes.setText("Routes Created: " + ((ArrayList<Route>) newUser.get("Routes")).size());
             }
+            updateButton();
+
+        }
+        public void updateButton() {
             if (friends != null && friends.size() > 0) {
                 for (ParseUser friend : friends) {
-                    if (friend.getObjectId().equals(newUser.getObjectId())) {
+                    if (friend.getObjectId().equals(user.getObjectId())) {
                         btnAddFriend.setText(R.string.friends);
                         btnAddFriend.setClickable(false);
                     }
@@ -115,7 +121,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
             }
             if (outgoingRequests != null && outgoingRequests.size() > 0) {
                 for (ParseUser request : outgoingRequests) {
-                    if (request.getObjectId().equals(newUser.getObjectId())) {
+                    if (request.getObjectId().equals(user.getObjectId())) {
                         btnAddFriend.setText(R.string.request_sent);
                         btnAddFriend.setClickable(false);
                     }

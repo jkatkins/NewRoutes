@@ -534,6 +534,7 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
 
             // Set the component's render mode
             locationComponent.setRenderMode(RenderMode.COMPASS);
+
         } else {
             permissionsManager = new PermissionsManager(this);
             permissionsManager.requestLocationPermissions(this);

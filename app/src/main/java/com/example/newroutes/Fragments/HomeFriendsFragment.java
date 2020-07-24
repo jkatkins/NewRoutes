@@ -23,11 +23,13 @@ import com.example.newroutes.R;
 import com.example.newroutes.databinding.FragmentHomeFriendRequestsBinding;
 import com.example.newroutes.databinding.FragmentHomeFriendsBinding;
 import com.example.newroutes.databinding.FragmentRoutesBinding;
+import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class HomeFriendsFragment extends Fragment {
@@ -79,9 +81,19 @@ public class HomeFriendsFragment extends Fragment {
         if (friends == null || friends.size() == 0) {
             return;
         }
-        ParseObject.fetchAll(friends);
-        allFriends.addAll(friends);
-        adapter.notifyDataSetChanged();
+        ParseObject.fetchAllInBackground(friends, new FindCallback<ParseUser>() {
+            @Override
+            public void done(List<ParseUser> objects, ParseException e) {
+                if (e == null) {
+                    allFriends.clear();
+                    allFriends.addAll(objects);
+                    adapter.notifyDataSetChanged();
+                    Log.i(TAG,"query success!");
+                } else {
+                    Log.e(TAG,e.toString());
+                }
+            }
+        });
     }
 
 }

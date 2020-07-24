@@ -18,6 +18,7 @@ import com.example.newroutes.ParseObjects.FriendsManager;
 import com.example.newroutes.R;
 import com.example.newroutes.databinding.FragmentHomeFriendRequestsBinding;
 import com.example.newroutes.databinding.FragmentHomeFriendsBinding;
+import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
@@ -77,8 +78,17 @@ public class HomeFriendRequestsFragment extends Fragment {
         if (incomingRequests == null || incomingRequests.size() == 0) {
             return;
         }
-        ParseObject.fetchAll(incomingRequests);
-        friendRequests.addAll(incomingRequests);
-        adapter.notifyDataSetChanged();
+        ParseObject.fetchAllInBackground(incomingRequests, new FindCallback<ParseUser>() {
+            @Override
+            public void done(List<ParseUser> objects, ParseException e) {
+                if (e == null) {
+                    friendRequests.addAll(objects);
+                    adapter.notifyDataSetChanged();
+                    Log.i(TAG,"query success!");
+                } else {
+                    Log.e(TAG,e.toString());
+                }
+            }
+        });
     }
 }

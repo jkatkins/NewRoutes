@@ -33,6 +33,7 @@ public class FriendsManager extends ParseObject {
         for (ParseUser request : incomingRequests){
             if (request.getObjectId().equals(toRemove.getObjectId())) {
                 incomingRequests.remove(request);
+                break;
             }
         }
         remove(KEY_INCOMING_REQUESTS);

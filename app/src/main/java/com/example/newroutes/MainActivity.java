@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 Fragment fragment = null;
+                String tag = "";
                 switch(item.getItemId()) {
                     case R.id.item_new:
                         Intent createIntent = new Intent(MainActivity.this,CreateRouteActivity.class);

@@ -13,6 +13,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.newroutes.Fragments.HomeFragment;
+import com.example.newroutes.Fragments.HomeFriendRequestsFragment;
+import com.example.newroutes.Fragments.HomeFriendsFragment;
+import com.example.newroutes.MainActivity;
 import com.example.newroutes.ParseObjects.FriendsManager;
 import com.example.newroutes.ParseObjects.Route;
 import com.example.newroutes.R;
@@ -73,11 +77,27 @@ public class FriendRequestsAdapter extends RecyclerView.Adapter<FriendRequestsAd
                 public void onClick(View view) {
                     //TODO
                     try {
+                        btnAccept.setClickable(false);
                         ParseUser currentUser = ParseUser.getCurrentUser();
                         FriendsManager currentFriendsManager = ((FriendsManager)currentUser.get("FriendsManager")).fetch();
                         currentFriendsManager.addFriend(user);
                         currentFriendsManager.removeIncoming(user);
-                        currentFriendsManager.saveInBackground();
+                        currentFriendsManager.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                //update friend here
+                                Log.i(TAG,"current save success");
+                                String tag = "android:switcher:" + R.id.vpPager + ":" + 2;
+                                HomeFriendsFragment homeFriendsFragment = (HomeFriendsFragment)(((MainActivity)context).getSupportFragmentManager()
+                                        .findFragmentById(R.id.flContainer).getChildFragmentManager().findFragmentByTag(tag));
+                                try {
+                                    Log.i(TAG,"query called from adapter");
+                                    homeFriendsFragment.queryUsers();
+                                } catch (ParseException ex) {
+                                    ex.printStackTrace();
+                                }
+                            }
+                        });
                         FriendsManager senderFriendsManager = ((FriendsManager)user.get("FriendsManager")).fetch();
                         senderFriendsManager.addFriend(currentUser);
                         senderFriendsManager.removeOutgoing(currentUser);
@@ -94,6 +114,7 @@ public class FriendRequestsAdapter extends RecyclerView.Adapter<FriendRequestsAd
                 public void onClick(View view) {
                     //TODO
                     try {
+                        btnDecline.setClickable(false);
                         ParseUser currentUser = ParseUser.getCurrentUser();
                         FriendsManager senderFriendsManager = ((FriendsManager)user.get("FriendsManager")).fetchIfNeeded();
                         senderFriendsManager.removeOutgoing(currentUser);
