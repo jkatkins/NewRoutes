@@ -5,8 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -19,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.newroutes.ParseObjects.Route;
+import com.example.newroutes.databinding.ActivityCustomRouteBinding;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -87,39 +90,27 @@ public class CustomRouteActivity extends AppCompatActivity implements OnMapReady
     private static final String ROUTE_LAYER_ID = "route-layer-id";
 
 
-    public static final String TAG = "CreateRouteActivity";
+    public static final String TAG = "CustomRouteActivity";
     private static final String ID_ICON = "placeholder";
+    private Context context;
     private MapView mapView;
     private MapboxMap map;
     private Button btnStart;
-    private Button btnSave;
     private EditText etRouteName;
     private TextView tvDistanceText;
     private ImageView ivMap;
     private Button btnSaveFinal;
     private ImageView hoveringMarker;
     private SymbolManager symbolManager;
-    private Symbol symbol1 = null;
     private PermissionsManager permissionsManager;
     private DirectionsRoute currentRoute;
-    private EditText etDistance;
     private MapboxDirections client;
-    private MapboxGeocoding geoClient;
-    private int numPoints;
-    private Double distanceInMiles;
-    private LatLng center;
-    private Point centerPoint;
-    private Double radius;
-    private int targetNumPoints = 4;
-    private double angle;
-    private double length;
     private GeoJson routeGeoJson;
-    private double width;
     private FrameLayout flSaveRoute;
-    private ArrayList<Point> points = new ArrayList<>();
+    private Symbol lastLocation;
     private ArrayList<Symbol> symbols = new ArrayList<>();
     private static final String DROPPED_MARKER_LAYER_ID = "DROPPED_MARKER_LAYER_ID";
-    ActivityCreateRouteBinding binding;
+    ActivityCustomRouteBinding binding;
 
 
     @Override
@@ -128,7 +119,7 @@ public class CustomRouteActivity extends AppCompatActivity implements OnMapReady
 
         Mapbox.getInstance(this, getString(R.string.mapbox_access_token));
 
-        binding = ActivityCreateRouteBinding.inflate(getLayoutInflater());
+        binding = ActivityCustomRouteBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         Toolbar toolbar = binding.toolbar;
@@ -136,10 +127,9 @@ public class CustomRouteActivity extends AppCompatActivity implements OnMapReady
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        context = this;
         btnStart = binding.btnStart;
-        btnSave = binding.btnSave;
         flSaveRoute = binding.flSaveRoute;
-        etDistance = binding.etDistance;
         etRouteName = binding.etRouteName;
         ivMap = binding.ivMap;
         tvDistanceText = binding.tvDistanceText;
@@ -177,8 +167,44 @@ public class CustomRouteActivity extends AppCompatActivity implements OnMapReady
 
                         style.addImage(ID_ICON, BitmapUtils.getBitmapFromDrawable(getResources().getDrawable(R.drawable.mapbox_marker_icon_default)));
 
+                        btnStart.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                LatLng targetLatLng = map.getCameraPosition().target;
+                                lastLocation = dropPin(targetLatLng);
+                                Thread thread = new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            periodicUpdates();
+                                        } catch (InterruptedException e) {
+                                            Log.i(TAG,"threading error");
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                                thread.start();
+                            }
+                        });
                     }
                 });
+    }
+
+    public void periodicUpdates() throws InterruptedException {
+        while (true) {
+            Thread.sleep(2000);
+            Log.i(TAG,"calling new route");
+            Handler mainHandler = new Handler(context.getMainLooper());
+
+            Runnable myRunnable = new Runnable() {
+                @Override
+                public void run() {
+                    Symbol point2 = dropHiddenPin(map.getCameraPosition().target);
+                    getRoute(lastLocation.getGeometry(), point2.getGeometry());
+                } // This is your code
+            };
+            mainHandler.post(myRunnable);
+        }
     }
 
     private void initLayers(@NonNull Style loadedMapStyle) {
@@ -195,6 +221,26 @@ public class CustomRouteActivity extends AppCompatActivity implements OnMapReady
         loadedMapStyle.addSource(new GeoJsonSource(ROUTE_SOURCE_ID));
     }
 
+    private GeoJson combineGeoJsons(GeoJson geoJson1, GeoJson geoJson2) {
+        JsonObject jsonObject1 = JsonParser.parseString(geoJson1.toJson()).getAsJsonObject();
+        JsonArray coordinatesJsonArray1 = jsonObject1.getAsJsonArray("coordinates");
+        JsonObject jsonObject2 = JsonParser.parseString(geoJson2.toJson()).getAsJsonObject();
+        JsonArray coordinatesJsonArray2 = jsonObject2.getAsJsonArray("coordinates");
+        ArrayList<Point> points = new ArrayList<>();
+        for (int i = 0;i < coordinatesJsonArray1.size();i++) {
+            JsonArray currentSpot = coordinatesJsonArray1.get(i).getAsJsonArray();
+            Point newPoint = Point.fromLngLat(currentSpot.get(0).getAsDouble(),currentSpot.get(1).getAsDouble());
+            points.add(newPoint);
+        }
+        for (int i = 0;i < coordinatesJsonArray2.size();i++) {
+            JsonArray currentSpot = coordinatesJsonArray2.get(i).getAsJsonArray();
+            Point newPoint = Point.fromLngLat(currentSpot.get(0).getAsDouble(),currentSpot.get(1).getAsDouble());
+            points.add(newPoint);
+        }
+        LineString lineString = LineString.fromLngLats(points);
+        return lineString;
+    }
+
     private void getRoute(Point origin,Point Destination) {
         MapboxDirections.Builder builder = MapboxDirections.builder()
                 .origin(origin)
@@ -203,10 +249,7 @@ public class CustomRouteActivity extends AppCompatActivity implements OnMapReady
                 .profile(DirectionsCriteria.PROFILE_WALKING)
                 .accessToken(getString(R.string.mapbox_access_token));
 
-        for (Point waypoint : points) {
-            builder.addWaypoint(waypoint);
-            builder.continueStraight(true);
-        }
+
         client = builder.build();
 
         client.enqueueCall(new Callback<DirectionsResponse>() {
