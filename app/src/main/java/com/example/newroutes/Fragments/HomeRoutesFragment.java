@@ -1,6 +1,13 @@
 package com.example.newroutes.Fragments;
 
+import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.example.newroutes.ParseObjects.Route;
 import com.parse.FindCallback;
@@ -25,8 +32,16 @@ public class HomeRoutesFragment extends RoutesFragment{
             @Override
             public void done(List<Route> objects, ParseException e) {
                 if (e == null) {
+                    routes.clear();
                     routes.addAll(objects);
                     adapter.notifyDataSetChanged();
+                    if (!routes.isEmpty()) {
+                        ivEmpty.setVisibility(View.INVISIBLE);
+                        tvEmpty.setVisibility(View.INVISIBLE);
+                    } else {
+                        ivEmpty.setVisibility(View.VISIBLE);
+                        tvEmpty.setVisibility(View.VISIBLE);
+                    }
                 } else {
                     Log.e(TAG,"failed to fetch routes");
                 }

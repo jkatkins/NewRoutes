@@ -7,6 +7,32 @@
     android:fitsSystemWindows="true"
     tools:context=".CreateRouteActivity">
 
+    <com.mapbox.mapboxsdk.maps.MapView
+        android:id="@+id/mapView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/cvOptions"
+        android:layout_alignParentBottom="true"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="-1dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/llDistance"
+        app:mapbox_cameraTargetLat="37.7749"
+        app:mapbox_cameraTargetLng="-122.4194"
+        app:mapbox_cameraZoom="12">
+
+    </com.mapbox.mapboxsdk.maps.MapView>
+
+    <Switch
+        android:id="@+id/switchCustom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/cvOptions"
+        android:layout_marginTop="0dp"
+        android:text="Switch" />
+
     <androidx.cardview.widget.CardView
         android:id="@+id/cvOptions"
         android:layout_width="match_parent"
@@ -57,24 +83,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <com.mapbox.mapboxsdk.maps.MapView
-        android:id="@+id/mapView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/cvOptions"
-        android:layout_alignParentBottom="true"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="-1dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/llDistance"
-        app:mapbox_cameraTargetLat="37.7749"
-        app:mapbox_cameraTargetLng="-122.4194"
-        app:mapbox_cameraZoom="12">
-
-    </com.mapbox.mapboxsdk.maps.MapView>
 
     <LinearLayout
         android:id="@+id/llDistance"

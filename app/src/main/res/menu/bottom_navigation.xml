@@ -3,14 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/item_new"
-        android:icon="@drawable/ic_add"
-        android:title="New"
-        app:showAsAction="always" />
-    <item
-        android:id="@+id/item_profile"
-        android:icon="@drawable/ic_profile"
-        android:title="Profile"
+        android:id="@+id/item_home"
+        android:icon="@drawable/ic_home"
+        android:title="Home"
         app:showAsAction="always" />
     <item
         android:id="@+id/item_routes"
@@ -18,13 +13,18 @@
         android:title="Routes"
         app:showAsAction="always" />
     <item
+        android:id="@+id/item_new"
+        android:icon="@drawable/ic_add"
+        android:title="New"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/item_friends"
         android:icon="@drawable/ic_friends"
         android:title="Friends"
         app:showAsAction="always" />
     <item
-        android:id="@+id/item_home"
-        android:icon="@drawable/ic_home"
-        android:title="Home"
+        android:id="@+id/item_profile"
+        android:icon="@drawable/ic_profile"
+        android:title="Profile"
         app:showAsAction="always" />
 </menu>

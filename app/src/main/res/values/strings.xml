@@ -19,4 +19,5 @@
     <string name="routes_created">"Routes Created: "</string>
     <string name="friends">Friends</string>
     <string name="request_sent">Request Sent</string>
+    <string name="no_routes">You don\'t have any routes. Click here to create some!</string>
 </resources>

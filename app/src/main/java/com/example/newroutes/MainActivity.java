@@ -62,9 +62,14 @@ public class MainActivity extends AppCompatActivity {
                     default:
                         fragment = new ProfileFragment();
                 }
-                    FragmentManager fragmentManager = getSupportFragmentManager();
-                    fragmentManager.beginTransaction().replace(flContainer.getId(),fragment).commit();
-                return true;
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                Fragment currentFragment = fragmentManager.findFragmentById(R.id.flContainer);
+                if (currentFragment != null && currentFragment.getClass().equals(fragment.getClass())) {
+                    return false;
+                } else {
+                    fragmentManager.beginTransaction().replace(flContainer.getId(), fragment).commit();
+                    return true;
+                }
             }
         });
         bottomNavigationView.setSelectedItemId(R.id.item_home);

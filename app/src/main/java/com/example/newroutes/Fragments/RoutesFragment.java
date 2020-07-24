@@ -13,6 +13,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.newroutes.ParseObjects.Route;
 import com.example.newroutes.RouteDetailsActivity;
@@ -34,6 +36,8 @@ public class RoutesFragment extends Fragment implements RouteInterface {
     public ArrayList<Route> routes;
     public RecyclerView rvRoutes;
     public RoutesAdapter adapter;
+    public ImageView ivEmpty;
+    public TextView tvEmpty;
     FragmentRoutesBinding binding;
 
     public RoutesFragment() {
@@ -57,6 +61,8 @@ public class RoutesFragment extends Fragment implements RouteInterface {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         rvRoutes = binding.rvRoutes;
+        tvEmpty = binding.tvEmpty;
+        ivEmpty = binding.ivEmpty;
         routes = new ArrayList<>();
         adapter = new RoutesAdapter(getContext(),routes,this);
         rvRoutes.setAdapter(adapter);
@@ -79,6 +85,14 @@ public class RoutesFragment extends Fragment implements RouteInterface {
                 routes.clear();
                 routes.addAll(newRoutes);
                 adapter.notifyDataSetChanged();
+                if (!routes.isEmpty()) {
+                    ivEmpty.setVisibility(View.INVISIBLE);
+                    tvEmpty.setVisibility(View.INVISIBLE);
+                } else {
+                    ivEmpty.setVisibility(View.VISIBLE);
+                    tvEmpty.setVisibility(View.VISIBLE);
+                }
+
             }
         });
     }

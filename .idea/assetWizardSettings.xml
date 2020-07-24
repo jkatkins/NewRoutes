@@ -24,7 +24,7 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
-                                                <entry key="imagePath" value="/private/var/folders/g0/y91kl9px0g90n9mlct_nz2v80000gn/T/baseline_person_24.xml" />
+                                                <entry key="imagePath" value="/private/var/folders/g0/y91kl9px0g90n9mlct_nz2v80000gn/T/baseline_arrow_downward_24.xml" />
                                                 <entry key="opacityPercent" value="80" />
                                               </map>
                                             </option>
@@ -36,7 +36,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="url" value="jar:file:/Applications/Android%20Studio.app/Contents/plugins/android/lib/android.jar!/images/material/icons/materialicons/person/baseline_person_24.xml" />
+                                                <entry key="url" value="jar:file:/Applications/Android%20Studio.app/Contents/plugins/android/lib/android.jar!/images/material/icons/materialicons/arrow_downward/baseline_arrow_downward_24.xml" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -81,11 +81,10 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="assetType" value="IMAGE" />
                                       <entry key="imageAsset" value="$USER_HOME$/Desktop/RouteExampleImage.png" />
-                                      <entry key="outputName" value="ic_sample_route" />
+                                      <entry key="outputName" value="ic_arrow_down" />
                                       <entry key="theme" value="CUSTOM" />
-                                      <entry key="themeColor" value="000000" />
+                                      <entry key="themeColor" value="696969" />
                                     </map>
                                   </option>
                                 </PersistentState>
