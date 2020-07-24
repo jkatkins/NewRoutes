@@ -14,7 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ViewUserProfileActivity"></activity>
+        <activity android:name=".CustomRouteActivity"></activity>
+        <activity android:name=".RouteOptionsActivity" />
+        <activity android:name=".ViewUserProfileActivity" />
         <activity android:name=".RouteDetailsActivity" />
 
         <provider

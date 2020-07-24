@@ -34,6 +34,7 @@ public class UsersFragment extends Fragment {
     public ArrayList<ParseUser> users;
     public ArrayList<ParseUser> friends;
     public ArrayList<ParseUser> outgoingRequests;
+    public ArrayList<ParseUser> incomingRequests;
     FragmentUsersBinding binding;
 
 
@@ -67,10 +68,11 @@ public class UsersFragment extends Fragment {
             FriendsManager friendsManager = ((FriendsManager) ParseUser.getCurrentUser().get("FriendsManager")).fetchIfNeeded();
             friends = friendsManager.getFriends();
             outgoingRequests = friendsManager.getOutgoing();
+            incomingRequests = friendsManager.getIncoming();
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        adapter = new UsersAdapter(getContext(),users,friends,outgoingRequests);
+        adapter = new UsersAdapter(getContext(),users,friends,outgoingRequests,incomingRequests);
         rvUsers.setAdapter(adapter);
         rvUsers.setLayoutManager(new LinearLayoutManager(getContext()));
         queryUsers();

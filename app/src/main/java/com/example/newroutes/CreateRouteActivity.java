@@ -86,7 +86,6 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
     private static final String ROUTE_SOURCE_ID = "route-source-id";
     private static final String ROUTE_LAYER_ID = "route-layer-id";
 
-    final FragmentManager fragmentManager = getSupportFragmentManager();
 
     public static final String TAG = "CreateRouteActivity";
     private static final String ID_ICON = "placeholder";

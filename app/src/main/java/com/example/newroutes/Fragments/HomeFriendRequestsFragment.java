@@ -74,7 +74,7 @@ public class HomeFriendRequestsFragment extends Fragment {
 
     private void queryRequests() throws ParseException {
         Log.i(TAG,"query requests");
-        ((FriendsManager)ParseUser.getCurrentUser().get("FriendsManager")).fetchIfNeededInBackground(new GetCallback<ParseObject>() {
+        ((FriendsManager)ParseUser.getCurrentUser().get("FriendsManager")).fetchInBackground(new GetCallback<ParseObject>() {
             @Override
             public void done(ParseObject object, ParseException e) {
                 FriendsManager friendsManager = (FriendsManager)object;

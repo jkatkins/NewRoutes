@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
                 String tag = "";
                 switch(item.getItemId()) {
                     case R.id.item_new:
-                        Intent createIntent = new Intent(MainActivity.this,CreateRouteActivity.class);
+                        Intent createIntent = new Intent(MainActivity.this,RouteOptionsActivity.class);
                         startActivity(createIntent);
                         return false;
                     case R.id.item_friends: //TODO fill this out

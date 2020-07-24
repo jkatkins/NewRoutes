@@ -33,12 +33,14 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
     ArrayList<ParseUser> users;
     ArrayList<ParseUser> friends;
     ArrayList<ParseUser> outgoingRequests;
+    ArrayList<ParseUser> incomingRequests;
 
-    public UsersAdapter(Context context, ArrayList<ParseUser> users,ArrayList<ParseUser> friends,ArrayList<ParseUser> outgoingRequests) {
+    public UsersAdapter(Context context, ArrayList<ParseUser> users,ArrayList<ParseUser> friends,ArrayList<ParseUser> outgoingRequests,ArrayList<ParseUser> incomingRequests) {
         this.context = context;
         this.users = users;
         this.friends = friends;
         this.outgoingRequests = outgoingRequests;
+        this.incomingRequests = incomingRequests;
     }
 
     @NonNull
@@ -123,6 +125,14 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
                 for (ParseUser request : outgoingRequests) {
                     if (request.getObjectId().equals(user.getObjectId())) {
                         btnAddFriend.setText(R.string.request_sent);
+                        btnAddFriend.setClickable(false);
+                    }
+                }
+            }
+            if (incomingRequests != null && incomingRequests.size() > 0) {
+                for (ParseUser request : incomingRequests) {
+                    if (request.getObjectId().equals(user.getObjectId())) {
+                        btnAddFriend.setText(R.string.respond);
                         btnAddFriend.setClickable(false);
                     }
                 }
