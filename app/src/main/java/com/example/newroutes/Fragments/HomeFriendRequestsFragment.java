@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.example.newroutes.Adapters.FriendRequestsAdapter;
 import com.example.newroutes.ParseObjects.FriendsManager;
@@ -35,6 +36,7 @@ public class HomeFriendRequestsFragment extends Fragment {
     private RecyclerView rvFriendRequests;
     private FriendRequestsAdapter adapter;
     private ArrayList<ParseUser> friendRequests;
+    private ProgressBar progressBar;
     FragmentHomeFriendRequestsBinding binding;
 
 
@@ -61,6 +63,7 @@ public class HomeFriendRequestsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         rvFriendRequests = binding.rvFriendRequests;
+        progressBar = binding.progressBar;
         friendRequests = new ArrayList<>();
         adapter = new FriendRequestsAdapter(friendRequests,getContext());
         rvFriendRequests.setAdapter(adapter);
@@ -73,6 +76,7 @@ public class HomeFriendRequestsFragment extends Fragment {
     }
 
     private void queryRequests() throws ParseException {
+        progressBar.setVisibility(View.VISIBLE);
         Log.i(TAG,"query requests");
         ((FriendsManager)ParseUser.getCurrentUser().get("FriendsManager")).fetchInBackground(new GetCallback<ParseObject>() {
             @Override
@@ -80,11 +84,13 @@ public class HomeFriendRequestsFragment extends Fragment {
                 FriendsManager friendsManager = (FriendsManager)object;
                 ArrayList<ParseUser> incomingRequests = (ArrayList<ParseUser>) friendsManager.get("IncomingRequests");
                 if (incomingRequests == null || incomingRequests.size() == 0) {
+                    progressBar.setVisibility(View.GONE);
                     return;
                 }
                 ParseObject.fetchAllInBackground(incomingRequests, new FindCallback<ParseUser>() {
                     @Override
                     public void done(List<ParseUser> objects, ParseException e) {
+                        progressBar.setVisibility(View.GONE);
                         if (e == null) {
                             friendRequests.addAll(objects);
                             adapter.notifyDataSetChanged();

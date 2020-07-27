@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.newroutes.ParseObjects.Route;
@@ -39,6 +40,7 @@ public class RoutesFragment extends Fragment implements RouteInterface {
     public RoutesAdapter adapter;
     public ImageView ivEmpty;
     public TextView tvEmpty;
+    public ProgressBar progressBar;
     FragmentRoutesBinding binding;
 
     public RoutesFragment() {
@@ -64,6 +66,7 @@ public class RoutesFragment extends Fragment implements RouteInterface {
         rvRoutes = binding.rvRoutes;
         tvEmpty = binding.tvEmpty;
         ivEmpty = binding.ivEmpty;
+        progressBar = binding.progressBar;
         routes = new ArrayList<>();
         adapter = new RoutesAdapter(getContext(),routes,this);
         rvRoutes.setAdapter(adapter);
@@ -76,9 +79,11 @@ public class RoutesFragment extends Fragment implements RouteInterface {
         ParseQuery<Route> query = ParseQuery.getQuery(Route.class);
         query.include(Route.KEY_USER);
         query.setLimit(20);
+        progressBar.setVisibility(View.VISIBLE);
         query.findInBackground(new FindCallback<Route>() {
             @Override
             public void done(List<Route> newRoutes, ParseException e) {
+                progressBar.setVisibility(View.GONE);
                 if (e != null) {
                     Log.e(TAG,"issue");
                     return;
@@ -94,7 +99,6 @@ public class RoutesFragment extends Fragment implements RouteInterface {
                     ivEmpty.setVisibility(View.VISIBLE);
                     tvEmpty.setVisibility(View.VISIBLE);
                 }
-
             }
         });
     }

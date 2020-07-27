@@ -23,6 +23,7 @@ public class HomeRoutesFragment extends RoutesFragment{
 
     @Override
     protected void queryRoutes() {
+        progressBar.setVisibility(View.VISIBLE);
         ParseUser currentUser = ParseUser.getCurrentUser();
         List<Route> userRoutes = (ArrayList<Route>)currentUser.get("Routes");
         if (userRoutes == null) {
@@ -31,6 +32,7 @@ public class HomeRoutesFragment extends RoutesFragment{
         ParseObject.fetchAllInBackground(userRoutes, new FindCallback<Route>() {
             @Override
             public void done(List<Route> objects, ParseException e) {
+                progressBar.setVisibility(View.GONE);
                 if (e == null) {
                     routes.clear();
                     routes.addAll(objects);

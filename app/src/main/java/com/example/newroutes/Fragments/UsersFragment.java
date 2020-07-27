@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.example.newroutes.ParseObjects.FriendsManager;
 import com.example.newroutes.ParseObjects.Route;
@@ -35,6 +36,7 @@ public class UsersFragment extends Fragment {
     public ArrayList<ParseUser> friends;
     public ArrayList<ParseUser> outgoingRequests;
     public ArrayList<ParseUser> incomingRequests;
+    public ProgressBar progressBar;
     FragmentUsersBinding binding;
 
 
@@ -61,6 +63,7 @@ public class UsersFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         rvUsers = binding.rvUsers;
+        progressBar = binding.progressBar;
         users = new ArrayList<>();
         friends = new ArrayList<>();
         outgoingRequests = new ArrayList<>();
@@ -79,6 +82,7 @@ public class UsersFragment extends Fragment {
     }
 
     public void queryUsers() {
+        progressBar.setVisibility(View.VISIBLE);
         Log.i(TAG,"Query users");
         ParseQuery<ParseUser> query = ParseUser.getQuery();
         query.include(Route.KEY_USER);
@@ -87,6 +91,7 @@ public class UsersFragment extends Fragment {
         query.findInBackground(new FindCallback<ParseUser>() {
             @Override
             public void done(List<ParseUser> newUsers, ParseException e) {
+                progressBar.setVisibility(View.GONE);
                 if (e != null) {
                     Log.e(TAG,"issue");
                     return;
