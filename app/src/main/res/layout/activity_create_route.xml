@@ -49,7 +49,7 @@
                 android:id="@+id/tvDistance"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="Distance: 1 miles"
+                android:text="Distance: 1.0 miles"
                 android:textColor="#000000"
                 android:textSize="20sp" />
 

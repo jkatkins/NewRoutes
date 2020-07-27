@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="horizontal"
     tools:context=".RouteOptionsActivity">
 
@@ -22,48 +22,52 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cvRandom"
-        android:layout_width="0dp"
-        android:layout_height="300dp"
-        android:layout_gravity="center_vertical"
-        android:layout_margin="8dp"
-        android:layout_weight="1"
-        app:cardBackgroundColor="@color/mapbox_navigation_route_layer_congestion_red"
-        app:cardElevation="5dp"
-        app:cardMaxElevation="5dp">
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cvRandom"
+            android:layout_width="0dp"
+            android:layout_height="300dp"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="8dp"
+            android:layout_weight="1"
+            app:cardBackgroundColor="@color/colorPrimaryDark"
+            app:cardElevation="5dp"
+            app:cardMaxElevation="5dp">
 
-        <TextView
-            android:id="@+id/tvRandom"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="2dp"
-            android:text="Generate random routes by specifying a starting point and a target distance."
-            android:textAlignment="center"
-            android:textColor="#000000"
-            android:textSize="24sp" />
-    </androidx.cardview.widget.CardView>
+            <TextView
+                android:id="@+id/tvRandom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="2dp"
+                android:background="@color/colorPrimaryDark"
+                android:text="Generate random routes by specifying a starting point and a target distance."
+                android:textAlignment="center"
+                android:textColor="#000000"
+                android:textSize="24sp" />
+        </androidx.cardview.widget.CardView>
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cvCustom"
-        android:layout_width="0dp"
-        android:layout_height="300dp"
-        android:layout_gravity="center_vertical"
-        android:layout_margin="8dp"
-        android:layout_weight="1"
-        app:cardBackgroundColor="@color/mapbox_navigation_route_layer_blue"
-        app:cardElevation="5dp"
-        app:cardMaxElevation="5dp">
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cvCustom"
+            android:layout_width="0dp"
+            android:layout_height="300dp"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="8dp"
+            android:layout_weight="1"
+            app:cardBackgroundColor="@color/colorAlternateLight"
+            app:cardElevation="5dp"
+            app:cardMaxElevation="5dp">
 
-        <TextView
-            android:id="@+id/tvCustom"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="2dp"
-            android:text="Create a custom route by choosing waypoints on the map"
-            android:textAlignment="center"
-            android:textColor="#000000"
-            android:textSize="24sp" />
-    </androidx.cardview.widget.CardView>
+            <TextView
+                android:id="@+id/tvCustom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="2dp"
+                android:background="@color/colorAlternateLight"
+                android:text="Create a custom route by choosing waypoints on the map"
+                android:textAlignment="center"
+                android:textColor="#000000"
+                android:textSize="24sp" />
+        </androidx.cardview.widget.CardView>
     </LinearLayout>
 </RelativeLayout>
