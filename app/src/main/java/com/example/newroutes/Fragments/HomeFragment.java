@@ -14,7 +14,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.newroutes.databinding.FragmentHomeBinding;
+import com.google.android.material.badge.BadgeDrawable;
+import com.google.android.material.badge.BadgeUtils;
 import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
 
 import java.util.ArrayList;
 
@@ -66,6 +69,7 @@ public class HomeFragment extends Fragment {
         adapter.addFragment(homeRoutesFragment,"Routes");
         adapter.addFragment(homeFriendRequestsFragment,"Friend Requests");
         adapter.addFragment(homeFriendsFragment,"Friends");
+
     }
 
     private class ViewPagerAdapter extends FragmentPagerAdapter {

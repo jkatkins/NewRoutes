@@ -20,6 +20,8 @@ import com.example.newroutes.ParseObjects.FriendsManager;
 import com.example.newroutes.R;
 import com.example.newroutes.databinding.FragmentHomeFriendRequestsBinding;
 import com.example.newroutes.databinding.FragmentHomeFriendsBinding;
+import com.google.android.material.badge.BadgeDrawable;
+import com.google.android.material.tabs.TabLayout;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -36,9 +38,11 @@ public class HomeFriendRequestsFragment extends Fragment {
     public static final String TAG = "HomeFriendRequestsFrag";
     private RecyclerView rvFriendRequests;
     private FriendRequestsAdapter adapter;
-    private ArrayList<ParseUser> friendRequests;
+    public ArrayList<ParseUser> friendRequests;
     private ProgressBar progressBar;
-    public SwipeRefreshLayout swipeContainer;
+    private BadgeDrawable badgeDrawable;
+    private SwipeRefreshLayout swipeContainer;
+    private TabLayout tlTabs;
     FragmentHomeFriendRequestsBinding binding;
 
 
@@ -67,6 +71,8 @@ public class HomeFriendRequestsFragment extends Fragment {
         rvFriendRequests = binding.rvFriendRequests;
         progressBar = binding.progressBar;
         swipeContainer = binding.swipeContainer;
+        badgeDrawable = null;
+        tlTabs = ((View)view.getParent()).getRootView().findViewById(R.id.tlTabs);
         friendRequests = new ArrayList<>();
         adapter = new FriendRequestsAdapter(friendRequests,getContext());
         rvFriendRequests.setAdapter(adapter);
@@ -88,6 +94,15 @@ public class HomeFriendRequestsFragment extends Fragment {
                 }
             }
         });
+    }
+
+    public void updateBadge() {
+        if (friendRequests.size() > 0) {
+            badgeDrawable.setNumber(friendRequests.size());
+        } else {
+            badgeDrawable.setNumber(0);
+            badgeDrawable.setVisible(false);
+        }
     }
 
     private void queryRequests() throws ParseException {
@@ -115,6 +130,9 @@ public class HomeFriendRequestsFragment extends Fragment {
                         } else {
                             Log.e(TAG,e.toString());
                         }
+                        badgeDrawable = tlTabs.getTabAt(1).getOrCreateBadge();
+                        badgeDrawable.setNumber(friendRequests.size());
+                        badgeDrawable.setVisible(true);
                     }
                 });
             }

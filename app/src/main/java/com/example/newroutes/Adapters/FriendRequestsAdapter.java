@@ -104,6 +104,10 @@ public class FriendRequestsAdapter extends RecyclerView.Adapter<FriendRequestsAd
                         senderFriendsManager.saveInBackground();
                         friendRequests.remove(getAdapterPosition());
                         notifyItemRemoved(getAdapterPosition());
+                        String tag = "android:switcher:" + R.id.vpPager + ":" + 1;
+                        HomeFriendRequestsFragment homeFriendRequestsFragment = (HomeFriendRequestsFragment)(((MainActivity)context).getSupportFragmentManager()
+                                .findFragmentById(R.id.flContainer).getChildFragmentManager().findFragmentByTag(tag));
+                        homeFriendRequestsFragment.updateBadge();
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
@@ -124,6 +128,10 @@ public class FriendRequestsAdapter extends RecyclerView.Adapter<FriendRequestsAd
                         currentFriendsManager.saveInBackground();  //TODO Error handling
                         friendRequests.remove(getAdapterPosition());
                         notifyItemRemoved(getAdapterPosition());
+                        String tag = "android:switcher:" + R.id.vpPager + ":" + 1;
+                        HomeFriendRequestsFragment homeFriendRequestsFragment = (HomeFriendRequestsFragment)(((MainActivity)context).getSupportFragmentManager()
+                                .findFragmentById(R.id.flContainer).getChildFragmentManager().findFragmentByTag(tag));
+                        homeFriendRequestsFragment.updateBadge();
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }

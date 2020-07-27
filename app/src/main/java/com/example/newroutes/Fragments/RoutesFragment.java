@@ -87,6 +87,11 @@ public class RoutesFragment extends Fragment implements RouteInterface {
         });
     }
 
+    @Override public void onResume() {
+        super.onResume();
+        queryRoutes();
+    }
+
 
     protected void queryRoutes() {
         ParseQuery<Route> query = ParseQuery.getQuery(Route.class);
