@@ -28,7 +28,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/cvOptions"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/toolbar"
         android:layout_alignParentStart="true"
         android:layout_marginStart="0dp"
@@ -38,27 +38,26 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        app:layout_constraintVertical_bias="0.0" >
+        app:layout_constraintVertical_bias="0.0">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/tvDistance"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="Distance"
+                android:text="Distance: 1 miles"
                 android:textColor="#000000"
-                android:textSize="30sp" />
+                android:textSize="20sp" />
 
-            <EditText
-                android:id="@+id/etDistance"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:inputType="numberDecimal" />
+            <SeekBar
+                android:id="@+id/sbDistance"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
 
 
         </LinearLayout>

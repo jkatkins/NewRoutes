@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -94,7 +95,8 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
     private Button btnStart;
     private Button btnSave;
     private EditText etRouteName;
-    private TextView tvDistanceText;
+    private TextView tvDistanceText; //TODO change these variable names, they are confusing
+    private TextView tvDistance;
     private ImageView ivMap;
     private Button btnSaveFinal;
     private ImageView hoveringMarker;
@@ -102,7 +104,7 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
     private Symbol symbol1 = null;
     private PermissionsManager permissionsManager;
     private DirectionsRoute currentRoute;
-    private EditText etDistance;
+    private SeekBar sbDistance;
     private MapboxDirections client;
     private MapboxGeocoding geoClient;
     private int numPoints;
@@ -139,7 +141,8 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
         btnStart = binding.btnStart;
         btnSave = binding.btnSave;
         flSaveRoute = binding.flSaveRoute;
-        etDistance = binding.etDistance;
+        sbDistance = binding.sbDistance;
+        tvDistance = binding.tvDistance;
         etRouteName = binding.etRouteName;
         ivMap = binding.ivMap;
         tvDistanceText = binding.tvDistanceText;
@@ -204,10 +207,8 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                                     hoveringMarker.setVisibility(View.VISIBLE);
                                 } else if (numPoints > 0) { //Start has been validated, distance is invalid
                                     generateMore(map,style);
-                                } else if (etDistance.getText().toString().isEmpty() || Double.parseDouble(etDistance.getText().toString())<=0){ //Generate click
-                                    Toast.makeText(CreateRouteActivity.this, "Enter a valid distance", Toast.LENGTH_SHORT).show();
                                 } else { //generate with valid distance
-                                    distanceInMiles = Double.parseDouble(etDistance.getText().toString());
+                                    distanceInMiles = Double.valueOf(sbDistance.getProgress())/10 + 1;
                                     checkPoint(symbol1.getGeometry(),style);
                                 }
                             }
@@ -217,6 +218,18 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                             public void onClick(View view) {
                                SaveRoute();
                             }
+                        });
+                        sbDistance.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                            @Override
+                            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                                Double value = Double.valueOf(progress)/10 + 1;
+                                String newDistanceText = "Distance: " + value + " miles";
+                                tvDistance.setText(newDistanceText);
+                            }
+                            @Override
+                            public void onStartTrackingTouch(SeekBar seekBar) { }
+                            @Override
+                            public void onStopTrackingTouch(SeekBar seekBar) { }
                         });
                     }
                 });
