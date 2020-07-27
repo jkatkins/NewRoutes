@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -94,6 +95,7 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
     private MapboxMap map;
     private Button btnStart;
     private Button btnSave;
+    private ProgressBar progressBar;
     private EditText etRouteName;
     private TextView tvDistanceText; //TODO change these variable names, they are confusing
     private TextView tvDistance;
@@ -140,6 +142,7 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
 
         btnStart = binding.btnStart;
         btnSave = binding.btnSave;
+        progressBar = binding.progressBar;
         flSaveRoute = binding.flSaveRoute;
         sbDistance = binding.sbDistance;
         tvDistance = binding.tvDistance;
@@ -188,10 +191,16 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                                 //createRoute(mapTargetLatLng,map,style);
                                 //routeFromRandStart(mapTargetLatLng,map,style);
                                 if (symbol1 == null) { //User's first click on button
+                                    btnStart.setClickable(false);
+                                    progressBar.setVisibility(View.VISIBLE);
                                     symbol1 = dropPin(mapTargetLatLng);
                                     btnStart.setText(R.string.generate_route);
                                     hoveringMarker.setVisibility(View.INVISIBLE);
+                                    progressBar.setVisibility(View.INVISIBLE);
+                                    btnStart.setClickable(true);
                                 } else if (numPoints == targetNumPoints) { //reset route
+                                    btnStart.setClickable(false);
+                                    progressBar.setVisibility(View.VISIBLE);
                                     btnSave.setVisibility(View.GONE);
                                     numPoints = 0;
                                     btnStart.setText(R.string.choose_origin);
@@ -205,9 +214,10 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                                     }
                                     symbols.clear();
                                     hoveringMarker.setVisibility(View.VISIBLE);
-                                } else if (numPoints > 0) { //Start has been validated, distance is invalid
-                                    generateMore(map,style);
+                                    progressBar.setVisibility(View.INVISIBLE);
+                                    btnStart.setClickable(true);
                                 } else { //generate with valid distance
+                                    btnStart.setClickable(false);
                                     distanceInMiles = Double.valueOf(sbDistance.getProgress())/10 + 1;
                                     checkPoint(symbol1.getGeometry(),style);
                                 }
@@ -216,7 +226,7 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                         btnSave.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                               SaveRoute();
+                               saveRoute();
                             }
                         });
                         sbDistance.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -250,7 +260,7 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
     }
 
 
-    private void SaveRoute() {
+    private void saveRoute() {
         flSaveRoute.setVisibility(View.VISIBLE);
         LineString overlay = shortenGeoJson();
         MapboxStaticMap staticImage = MapboxStaticMap.builder()
@@ -400,6 +410,8 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                                 routeGeoJson = drawnRoute;
                                 source.setGeoJson(drawnRoute);
                                 btnSave.setVisibility(View.VISIBLE);
+                                progressBar.setVisibility(View.INVISIBLE);
+                                btnStart.setClickable(true);
                             }
                         }
                     });
@@ -417,6 +429,7 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
     }
 
     private void generateMore(MapboxMap map,Style loadedMapStyle) {
+        progressBar.setVisibility(View.VISIBLE);
         if (numPoints == targetNumPoints) {
             getRoute(map,symbol1.getGeometry());
             btnStart.setText(R.string.reset);
@@ -460,6 +473,7 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                         Toast.makeText(CreateRouteActivity.this, R.string.invalid_start, Toast.LENGTH_SHORT).show();
                         hoveringMarker.setVisibility(View.VISIBLE);
                         Log.d(TAG, "onResponse: No result found");
+                        btnStart.setClickable(true);
                     } else { //failed to choose a valid random point, repick center and restart process
                         symbols.clear();
                         numPoints = 1;

@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -42,6 +43,7 @@ public class HomeFriendsFragment extends Fragment {
     public ProgressBar progressBar;
     public ArrayList<ParseUser> allFriends;
     public RecyclerView rvFriends;
+    public SwipeRefreshLayout swipeContainer;
     FragmentHomeFriendsBinding binding;
 
     //Required empty constructor
@@ -67,19 +69,32 @@ public class HomeFriendsFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         rvFriends = binding.rvFriends;
         progressBar = binding.progressBar;
+        swipeContainer = binding.swipeContainer;
         allFriends = new ArrayList<>();
         adapter = new FriendsAdapter(getContext(),allFriends);
         rvFriends.setAdapter(adapter);
         rvFriends.setLayoutManager(new LinearLayoutManager(getContext()));
         try {
+            progressBar.setVisibility(View.VISIBLE);
             queryUsers();
         } catch (ParseException e) {
             e.printStackTrace();
+            progressBar.setVisibility(View.GONE);
         }
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                try {
+                    queryUsers();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    swipeContainer.setRefreshing(false);
+                }
+            }
+        });
     }
 
     public void queryUsers() throws ParseException {
-        progressBar.setVisibility(View.VISIBLE);
         Log.i(TAG,"query requestss");
         ((FriendsManager) ParseUser.getCurrentUser().get("FriendsManager")).fetchInBackground(new GetCallback<ParseObject>() {
             @Override
@@ -88,11 +103,13 @@ public class HomeFriendsFragment extends Fragment {
                 ArrayList<ParseUser> friends = (ArrayList<ParseUser>) friendsManager.get("Friends");
                 if (friends == null || friends.size() == 0) {
                     progressBar.setVisibility(View.GONE);
+                    swipeContainer.setRefreshing(false);
                     return;
                 }
                 ParseObject.fetchAllInBackground(friends, new FindCallback<ParseUser>() {
                     @Override
                     public void done(List<ParseUser> objects, ParseException e) {
+                        swipeContainer.setRefreshing(false);
                         progressBar.setVisibility(View.GONE);
                         if (e == null) {
                             allFriends.clear();

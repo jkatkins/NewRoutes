@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,6 +38,7 @@ public class HomeFriendRequestsFragment extends Fragment {
     private FriendRequestsAdapter adapter;
     private ArrayList<ParseUser> friendRequests;
     private ProgressBar progressBar;
+    public SwipeRefreshLayout swipeContainer;
     FragmentHomeFriendRequestsBinding binding;
 
 
@@ -64,19 +66,31 @@ public class HomeFriendRequestsFragment extends Fragment {
 
         rvFriendRequests = binding.rvFriendRequests;
         progressBar = binding.progressBar;
+        swipeContainer = binding.swipeContainer;
         friendRequests = new ArrayList<>();
         adapter = new FriendRequestsAdapter(friendRequests,getContext());
         rvFriendRequests.setAdapter(adapter);
         rvFriendRequests.setLayoutManager(new LinearLayoutManager(getContext()));
         try {
+            progressBar.setVisibility(View.VISIBLE);
             queryRequests();
         } catch (ParseException e) {
             e.printStackTrace();
+            progressBar.setVisibility(View.GONE);
         }
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                try {
+                    queryRequests();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     private void queryRequests() throws ParseException {
-        progressBar.setVisibility(View.VISIBLE);
         Log.i(TAG,"query requests");
         ((FriendsManager)ParseUser.getCurrentUser().get("FriendsManager")).fetchInBackground(new GetCallback<ParseObject>() {
             @Override
@@ -85,13 +99,16 @@ public class HomeFriendRequestsFragment extends Fragment {
                 ArrayList<ParseUser> incomingRequests = (ArrayList<ParseUser>) friendsManager.get("IncomingRequests");
                 if (incomingRequests == null || incomingRequests.size() == 0) {
                     progressBar.setVisibility(View.GONE);
+                    swipeContainer.setRefreshing(false);
                     return;
                 }
                 ParseObject.fetchAllInBackground(incomingRequests, new FindCallback<ParseUser>() {
                     @Override
                     public void done(List<ParseUser> objects, ParseException e) {
                         progressBar.setVisibility(View.GONE);
+                        swipeContainer.setRefreshing(false);
                         if (e == null) {
+                            friendRequests.clear();
                             friendRequests.addAll(objects);
                             adapter.notifyDataSetChanged();
                             Log.i(TAG,"query success!");

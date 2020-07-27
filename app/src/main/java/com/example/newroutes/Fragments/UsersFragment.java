@@ -7,6 +7,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,6 +38,7 @@ public class UsersFragment extends Fragment {
     public ArrayList<ParseUser> outgoingRequests;
     public ArrayList<ParseUser> incomingRequests;
     public ProgressBar progressBar;
+    public SwipeRefreshLayout swipeContainer;
     FragmentUsersBinding binding;
 
 
@@ -64,6 +66,7 @@ public class UsersFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         rvUsers = binding.rvUsers;
         progressBar = binding.progressBar;
+        swipeContainer = binding.swipeContainer;
         users = new ArrayList<>();
         friends = new ArrayList<>();
         outgoingRequests = new ArrayList<>();
@@ -78,11 +81,17 @@ public class UsersFragment extends Fragment {
         adapter = new UsersAdapter(getContext(),users,friends,outgoingRequests,incomingRequests);
         rvUsers.setAdapter(adapter);
         rvUsers.setLayoutManager(new LinearLayoutManager(getContext()));
+        progressBar.setVisibility(View.VISIBLE);
         queryUsers();
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                queryUsers();
+            }
+        });
     }
 
     public void queryUsers() {
-        progressBar.setVisibility(View.VISIBLE);
         Log.i(TAG,"Query users");
         ParseQuery<ParseUser> query = ParseUser.getQuery();
         query.include(Route.KEY_USER);
@@ -92,6 +101,7 @@ public class UsersFragment extends Fragment {
             @Override
             public void done(List<ParseUser> newUsers, ParseException e) {
                 progressBar.setVisibility(View.GONE);
+                swipeContainer.setRefreshing(false);
                 if (e != null) {
                     Log.e(TAG,"issue");
                     return;

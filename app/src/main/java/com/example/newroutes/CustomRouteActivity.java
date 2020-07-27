@@ -214,14 +214,18 @@ public class CustomRouteActivity extends AppCompatActivity implements OnMapReady
                         btnSaveRoute.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                SaveRoute();
+                                saveRoute();
                             }
                         });
                     }
                 });
     }
 
-    private void SaveRoute() {
+    private void resetRoute() {
+
+    }
+
+    private void saveRoute() {
         flSaveRoute.setVisibility(View.VISIBLE);
         LineString overlay = shortenGeoJson();
         MapboxStaticMap staticImage = MapboxStaticMap.builder()

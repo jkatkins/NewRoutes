@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -41,6 +42,7 @@ public class RoutesFragment extends Fragment implements RouteInterface {
     public ImageView ivEmpty;
     public TextView tvEmpty;
     public ProgressBar progressBar;
+    public SwipeRefreshLayout swipeContainer;
     FragmentRoutesBinding binding;
 
     public RoutesFragment() {
@@ -66,12 +68,23 @@ public class RoutesFragment extends Fragment implements RouteInterface {
         rvRoutes = binding.rvRoutes;
         tvEmpty = binding.tvEmpty;
         ivEmpty = binding.ivEmpty;
+        swipeContainer = binding.swipeContainer;
         progressBar = binding.progressBar;
         routes = new ArrayList<>();
         adapter = new RoutesAdapter(getContext(),routes,this);
         rvRoutes.setAdapter(adapter);
         rvRoutes.setLayoutManager(new GridLayoutManager(getContext(),2));
+        progressBar.setVisibility(View.VISIBLE);
         queryRoutes();
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // Your code to refresh the list here.
+                // Make sure you call swipeContainer.setRefreshing(false)
+                // once the network request has completed successfully.
+                queryRoutes();
+            }
+        });
     }
 
 
@@ -79,11 +92,11 @@ public class RoutesFragment extends Fragment implements RouteInterface {
         ParseQuery<Route> query = ParseQuery.getQuery(Route.class);
         query.include(Route.KEY_USER);
         query.setLimit(20);
-        progressBar.setVisibility(View.VISIBLE);
         query.findInBackground(new FindCallback<Route>() {
             @Override
             public void done(List<Route> newRoutes, ParseException e) {
                 progressBar.setVisibility(View.GONE);
+                swipeContainer.setRefreshing(false);
                 if (e != null) {
                     Log.e(TAG,"issue");
                     return;
