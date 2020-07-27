@@ -51,6 +51,7 @@ import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.api.geocoding.v5.models.GeocodingResponse;
 import com.mapbox.api.staticmap.v1.MapboxStaticMap;
 import com.mapbox.api.staticmap.v1.StaticMapCriteria;
+import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.geojson.GeoJson;
 import com.mapbox.geojson.LineString;
@@ -96,18 +97,24 @@ public class CustomRouteActivity extends AppCompatActivity implements OnMapReady
     private MapView mapView;
     private MapboxMap map;
     private Button btnStart;
+    private Button btnSave;
+    private Button btnSaveRoute;
     private EditText etRouteName;
     private TextView tvDistanceText;
     private ImageView ivMap;
     private Button btnSaveFinal;
+    private Double totalDistance = 0.0;
+    private Symbol firstPoint;
     private ImageView hoveringMarker;
     private SymbolManager symbolManager;
     private PermissionsManager permissionsManager;
     private DirectionsRoute currentRoute;
     private MapboxDirections client;
     private GeoJson routeGeoJson;
+    private GeoJson buildingGeoJson;
     private FrameLayout flSaveRoute;
     private Symbol lastLocation;
+    private LatLng lastGenerated;
     private ArrayList<Symbol> symbols = new ArrayList<>();
     private static final String DROPPED_MARKER_LAYER_ID = "DROPPED_MARKER_LAYER_ID";
     ActivityCustomRouteBinding binding;
@@ -129,6 +136,8 @@ public class CustomRouteActivity extends AppCompatActivity implements OnMapReady
 
         context = this;
         btnStart = binding.btnStart;
+        btnSave = binding.btnSave;
+        btnSaveRoute = binding.btnSaveRoute;
         flSaveRoute = binding.flSaveRoute;
         etRouteName = binding.etRouteName;
         ivMap = binding.ivMap;
@@ -172,6 +181,7 @@ public class CustomRouteActivity extends AppCompatActivity implements OnMapReady
                             public void onClick(View view) {
                                 LatLng targetLatLng = map.getCameraPosition().target;
                                 lastLocation = dropPin(targetLatLng);
+                                firstPoint = lastLocation;
                                 Thread thread = new Thread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -186,21 +196,140 @@ public class CustomRouteActivity extends AppCompatActivity implements OnMapReady
                                 thread.start();
                             }
                         });
+                        btnSave.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                LatLng targetLatLng = map.getCameraPosition().target;
+                                lastLocation = dropPin(targetLatLng);
+                                totalDistance += currentRoute.distance() * 0.000621371;
+                                Toast.makeText(context, "Current distance: " + totalDistance, Toast.LENGTH_SHORT).show();
+                                if (buildingGeoJson == null) {
+                                    buildingGeoJson = routeGeoJson;
+                                } else {
+                                    buildingGeoJson = combineGeoJsons(buildingGeoJson,routeGeoJson);
+                                }
+                            }
+                        });
+
+                        btnSaveRoute.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                SaveRoute();
+                            }
+                        });
                     }
                 });
     }
 
+    private void SaveRoute() {
+        flSaveRoute.setVisibility(View.VISIBLE);
+        LineString overlay = shortenGeoJson();
+        MapboxStaticMap staticImage = MapboxStaticMap.builder()
+                .accessToken(getString(R.string.mapbox_access_token))
+                .styleId(StaticMapCriteria.LIGHT_STYLE)
+                .cameraPoint(firstPoint.getGeometry()) // Image's centerpoint on map
+                .cameraZoom(11)
+                .width(320) // Image width
+                .height(320) // Image height
+                .retina(true) // Retina 2x image will be returned
+                .geoJson(overlay)
+                .build();
+        Toast.makeText(this, "Loading map", Toast.LENGTH_SHORT).show();
+        final String imageUrl = staticImage.url().toString();
+        tvDistanceText.setText(totalDistance.toString() + " Miles");
+        Glide.with(this)
+                .load(imageUrl)
+                .placeholder(R.drawable.ic_uploading)
+                .error(R.drawable.ic_upload_failed)
+                .into(ivMap);
+
+        JsonObject jsonObject = JsonParser.parseString(buildingGeoJson.toJson()).getAsJsonObject();
+
+        JsonArray coordinatesJsonArray = jsonObject.getAsJsonArray("coordinates");
+        final ArrayList<ArrayList<Double>> coordinates = new ArrayList<>();
+
+        for (JsonElement i: coordinatesJsonArray) {
+            JsonArray currentCoord = i.getAsJsonArray();
+            ArrayList<Double> toInsert = new ArrayList<>();
+            toInsert.add(currentCoord.get(0).getAsDouble());
+            toInsert.add(currentCoord.get(1).getAsDouble());
+            coordinates.add(toInsert);
+        }
+
+        btnSaveFinal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //save route here
+
+                final Route route = new Route();
+                route.setDistance(totalDistance);
+                route.setName(etRouteName.getText().toString());
+                if (etRouteName.getText().toString().isEmpty()) {
+                    route.setName(getString(R.string.unnamed_route));
+                }
+                route.setImageUrl(imageUrl);
+                route.setLinestring(coordinates);
+                route.setUser(ParseUser.getCurrentUser());
+                route.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        if (e == null) {
+                            ParseUser.getCurrentUser().add("Routes",route);
+                            ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    if (e == null) {
+                                        Toast.makeText(CustomRouteActivity.this, R.string.route_saved, Toast.LENGTH_LONG).show();
+                                        flSaveRoute.setVisibility(View.GONE);
+                                    } else {
+                                        Toast.makeText(CustomRouteActivity.this, R.string.route_failed, Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                        } else {
+                            Toast.makeText(CustomRouteActivity.this, R.string.route_failed, Toast.LENGTH_SHORT).show();
+                            Log.e(TAG,e.toString());
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    private LineString shortenGeoJson() {
+        JsonObject jsonObject = JsonParser.parseString(buildingGeoJson.toJson()).getAsJsonObject();
+        final JsonArray coordinatesJsonArray = jsonObject.getAsJsonArray("coordinates");
+        Log.i(TAG,"size is " + coordinatesJsonArray.size());
+        while (coordinatesJsonArray.size() >= 100) {
+            for (int i = 0;i<coordinatesJsonArray.size();i++) {
+                coordinatesJsonArray.remove(i);
+            }
+        }
+        ArrayList<Point> points = new ArrayList<>();
+        for (int i = 0;i < coordinatesJsonArray.size();i++) {
+            JsonArray currentSpot = coordinatesJsonArray.get(i).getAsJsonArray();
+            Point newPoint = Point.fromLngLat(currentSpot.get(0).getAsDouble(),currentSpot.get(1).getAsDouble());
+            points.add(newPoint);
+        }
+        LineString lineString = LineString.fromLngLats(points);
+        return lineString;
+    }
+
     public void periodicUpdates() throws InterruptedException {
         while (true) {
-            Thread.sleep(2000);
-            Log.i(TAG,"calling new route");
+            Thread.sleep(350);
             Handler mainHandler = new Handler(context.getMainLooper());
 
             Runnable myRunnable = new Runnable() {
                 @Override
                 public void run() {
+                    if (lastGenerated != null && lastGenerated.equals(map.getCameraPosition().target)) {
+                        return;
+                    }
+                    Log.i(TAG,"calling new route");
                     Symbol point2 = dropHiddenPin(map.getCameraPosition().target);
                     getRoute(lastLocation.getGeometry(), point2.getGeometry());
+                    lastGenerated = point2.getLatLng();
                 } // This is your code
             };
             mainHandler.post(myRunnable);
@@ -221,7 +350,10 @@ public class CustomRouteActivity extends AppCompatActivity implements OnMapReady
         loadedMapStyle.addSource(new GeoJsonSource(ROUTE_SOURCE_ID));
     }
 
-    private GeoJson combineGeoJsons(GeoJson geoJson1, GeoJson geoJson2) {
+    /*
+    Combines the 2 input Linestring GeoJsons by concatenating the coordinates of the 2nd to the end of the first.
+     */
+    private LineString combineGeoJsons(GeoJson geoJson1, GeoJson geoJson2) {
         JsonObject jsonObject1 = JsonParser.parseString(geoJson1.toJson()).getAsJsonObject();
         JsonArray coordinatesJsonArray1 = jsonObject1.getAsJsonArray("coordinates");
         JsonObject jsonObject2 = JsonParser.parseString(geoJson2.toJson()).getAsJsonObject();
@@ -268,7 +400,7 @@ public class CustomRouteActivity extends AppCompatActivity implements OnMapReady
 // Get the directions route
                 currentRoute = response.body().routes().get(0);
 // Make a toast which displays the route's distance
-                Toast.makeText(CustomRouteActivity.this, (Double.toString(currentRoute.distance()*0.000621371)), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(CustomRouteActivity.this, (Double.toString(currentRoute.distance()*0.000621371)), Toast.LENGTH_SHORT).show();
                 //0.000621371 is conversion from meters to miles
                 if (map != null) {
                     map.getStyle(new Style.OnStyleLoaded() {
@@ -281,7 +413,11 @@ public class CustomRouteActivity extends AppCompatActivity implements OnMapReady
                             if (source != null) {
                                 LineString drawnRoute = LineString.fromPolyline(currentRoute.geometry(), PRECISION_6);
                                 routeGeoJson = drawnRoute;
-                                source.setGeoJson(drawnRoute);
+                                if (buildingGeoJson == null) {
+                                    source.setGeoJson(drawnRoute);
+                                } else {
+                                    source.setGeoJson(combineGeoJsons(buildingGeoJson,routeGeoJson));
+                                }
                             }
                         }
                     });

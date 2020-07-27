@@ -25,14 +25,6 @@
 
     </com.mapbox.mapboxsdk.maps.MapView>
 
-    <Switch
-        android:id="@+id/switchCustom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/cvOptions"
-        android:layout_marginTop="0dp"
-        android:text="Switch" />
-
     <androidx.cardview.widget.CardView
         android:id="@+id/cvOptions"
         android:layout_width="match_parent"
@@ -125,6 +117,7 @@
             android:enabled="true"
             android:text="Save Route"
             android:textColor="@android:color/secondary_text_light_nodisable"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

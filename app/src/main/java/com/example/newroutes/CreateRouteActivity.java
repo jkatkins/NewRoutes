@@ -189,6 +189,7 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                                     btnStart.setText(R.string.generate_route);
                                     hoveringMarker.setVisibility(View.INVISIBLE);
                                 } else if (numPoints == targetNumPoints) { //reset route
+                                    btnSave.setVisibility(View.GONE);
                                     numPoints = 0;
                                     btnStart.setText(R.string.choose_origin);
                                     GeoJsonSource source = style.getSourceAs(ROUTE_SOURCE_ID);
@@ -385,6 +386,7 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                                 LineString drawnRoute = LineString.fromPolyline(currentRoute.geometry(), PRECISION_6);
                                 routeGeoJson = drawnRoute;
                                 source.setGeoJson(drawnRoute);
+                                btnSave.setVisibility(View.VISIBLE);
                             }
                         }
                     });
