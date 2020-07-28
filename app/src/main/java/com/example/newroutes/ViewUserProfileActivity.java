@@ -5,8 +5,11 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Pair;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -81,9 +84,10 @@ public class ViewUserProfileActivity extends AppCompatActivity implements RouteI
     }
 
     @Override
-    public void onRouteSelected(Route route) {
+    public void onRouteSelected(Route route, View name, View distance) {
         Intent i = new Intent (this, RouteDetailsActivity.class);
         i.putExtra("Route",Parcels.wrap(route));
-        startActivity(i);
+        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(this, Pair.create(name,"nameTransition"),Pair.create(distance,"distanceTransition"));
+        startActivity(i,options.toBundle());
     }
 }

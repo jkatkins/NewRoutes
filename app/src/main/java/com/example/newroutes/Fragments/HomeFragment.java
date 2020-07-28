@@ -66,7 +66,7 @@ public class HomeFragment extends Fragment {
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager(),0);
         vpPager.setAdapter(adapter);
-        adapter.addFragment(homeRoutesFragment,"Routes");
+        adapter.addFragment(homeRoutesFragment,"My Routes");
         adapter.addFragment(homeFriendRequestsFragment,"Friend Requests");
         adapter.addFragment(homeFriendsFragment,"Friends");
 

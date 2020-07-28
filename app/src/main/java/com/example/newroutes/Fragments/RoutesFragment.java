@@ -1,5 +1,6 @@
 package com.example.newroutes.Fragments;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -122,9 +124,13 @@ public class RoutesFragment extends Fragment implements RouteInterface {
     }
 
     @Override
-    public void onRouteSelected(Route route) {
+    public void onRouteSelected(Route route,View name, View distance) {
+
         Intent i = new Intent (getContext(), RouteDetailsActivity.class);
         i.putExtra("Route",Parcels.wrap(route));
-        startActivity(i);
+
+        ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(getActivity(), Pair.create(name,"nameTransition"),Pair.create(distance,"distanceTransition"));
+
+        startActivity(i,options.toBundle());
     }
 }

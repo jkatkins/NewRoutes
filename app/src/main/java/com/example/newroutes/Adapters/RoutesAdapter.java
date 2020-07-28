@@ -1,6 +1,7 @@
 package com.example.newroutes.Adapters;
 
 import android.content.Context;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,8 +65,7 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.ViewHolder
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //TODO implement an interface
-                    routeInterface.onRouteSelected(route);
+                    routeInterface.onRouteSelected(route,tvRouteName,tvDistance);
                 }
             });
         }

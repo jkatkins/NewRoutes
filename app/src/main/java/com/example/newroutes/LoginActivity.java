@@ -45,6 +45,7 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                btnLogin.setClickable(false);
                 String username = etUsername.getText().toString();
                 String password = etPassword.getText().toString();
                 loginUser(username,password);
@@ -66,6 +67,7 @@ public class LoginActivity extends AppCompatActivity {
             public void done(ParseUser user, ParseException e) {
                 if (e != null) {
                     Toast.makeText(LoginActivity.this, R.string.login_error, Toast.LENGTH_SHORT).show();
+                    btnLogin.setClickable(true);
                     return;
                 }
                 goMainActivity();
