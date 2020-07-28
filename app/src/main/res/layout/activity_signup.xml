@@ -4,12 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
     tools:context=".LoginActivity">
 
     <EditText
         android:id="@+id/etUsername"
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/etPassword"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
         android:ems="10"
         android:hint="Username"
         tools:layout_editor_absoluteX="38dp"
@@ -17,11 +21,11 @@
 
     <EditText
         android:id="@+id/etPassword"
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/etUsername"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="0dp"
+        android:layout_above="@+id/etConfirmPassword"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
         android:ems="10"
         android:hint="Password"
         android:inputType="textPassword"
@@ -30,11 +34,10 @@
 
     <EditText
         android:id="@+id/etConfirmPassword"
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/etPassword"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="0dp"
+        android:layout_centerInParent="true"
+        android:layout_centerVertical="true"
         android:ems="10"
         android:hint="Confirm Password"
         android:inputType="textPassword"
@@ -44,11 +47,11 @@
 
     <Button
         android:id="@+id/btnSignup"
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/etConfirmPassword"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="0dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:background="@color/colorAlternateLight"
         android:text="Sign up" />
 </RelativeLayout>

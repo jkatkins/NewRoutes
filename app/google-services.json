@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "313755971805",
+    "firebase_url": "https://new-routes-282116.firebaseio.com",
+    "project_id": "new-routes-282116",
+    "storage_bucket": "new-routes-282116.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:313755971805:android:1b37dad88e9955b364ab34",
+        "android_client_info": {
+          "package_name": "com.example.newroutes"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "313755971805-2bhmp46hb5jo7b2gaac5p7395f8gvigh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5modU8vR5ByzlcsZhlJBfN_T-yygW3DA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "313755971805-2bhmp46hb5jo7b2gaac5p7395f8gvigh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

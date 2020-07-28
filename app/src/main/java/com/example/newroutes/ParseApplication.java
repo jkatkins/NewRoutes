@@ -5,6 +5,7 @@ import android.app.Application;
 import com.example.newroutes.ParseObjects.FriendsManager;
 import com.example.newroutes.ParseObjects.Route;
 import com.parse.Parse;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 
 public class ParseApplication extends Application {
@@ -22,5 +23,9 @@ public class ParseApplication extends Application {
                 .applicationId("newroutes") // should correspond to APP_ID env variable
                 .clientKey("183945701345")  // set explicitly unless clientKey is explicitly configured on Parse server
                 .server("https://new-routes.herokuapp.com/parse").build());
+
+        ParseInstallation.getCurrentInstallation().saveInBackground();
     }
+
+
 }
