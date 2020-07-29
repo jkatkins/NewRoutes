@@ -56,6 +56,8 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.ViewHolder
         return routes.size();
     }
 
+
+
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         ImageView ivMap;
@@ -129,6 +131,7 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.ViewHolder
 
         public void bind(Route route) {
             ibFavorite.setClickable(false);
+            ibFavorite.setImageResource(R.drawable.ic_favorite_empty);
             favorited = false;
             DecimalFormat df = new DecimalFormat("#.##");
             String distance = df.format(route.getDistance());

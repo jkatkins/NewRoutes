@@ -35,7 +35,6 @@ public class HomeRoutesFragment extends RoutesFragment{
                 if (e == null) {
                     routes.clear();
                     routes.addAll(objects);
-                    adapter.notifyDataSetChanged();
                     finishQuery();
                 } else {
                     Log.e(TAG,"failed to fetch routes");
@@ -54,6 +53,7 @@ public class HomeRoutesFragment extends RoutesFragment{
             ivEmpty.setVisibility(View.VISIBLE);
             tvEmpty.setVisibility(View.VISIBLE);
         }
+        adapter.notifyDataSetChanged();
     }
 
 
