@@ -100,7 +100,6 @@ public class RoutesFragment extends Fragment implements RouteInterface {
         queryRoutes();
     }
 
-
     protected void queryRoutes() {
         ParseQuery<Route> query = ParseQuery.getQuery(Route.class);
         query.include(Route.KEY_USER);

@@ -8,6 +8,7 @@ import androidx.cardview.widget.CardView;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.transition.Scene;
 import android.widget.TextView;
 
 import com.example.newroutes.ParseObjects.Route;
@@ -27,6 +28,7 @@ import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 
 import org.parceler.Parcels;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.lineCap;
@@ -45,6 +47,8 @@ public class RouteDetailsActivity extends AppCompatActivity implements OnMapRead
     private TextView tvRouteName;
     private Route route;
     ActivityRouteDetailsBinding binding;
+
+    private Scene s1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +70,9 @@ public class RouteDetailsActivity extends AppCompatActivity implements OnMapRead
         tvDistance = binding.tvDistance;
         tvRouteName = binding.tvRouteName;
 
-        tvDistance.setText(route.getDistance().toString() + " miles");
+        DecimalFormat df = new DecimalFormat("#.##");
+        String distance = df.format(route.getDistance());
+        tvDistance.setText(distance + " miles");
         tvRouteName.setText(route.getName());
 
         mapView.onCreate(savedInstanceState);

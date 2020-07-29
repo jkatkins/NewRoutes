@@ -61,6 +61,7 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.ViewHolder
         ImageView ivMap;
         TextView tvRouteName;
         TextView tvDistance;
+        TextView tvCreatedBy;
         ImageButton ibFavorite;
         Route route;
         boolean favorited;
@@ -71,6 +72,7 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.ViewHolder
             tvRouteName = itemView.findViewById(R.id.tvRouteName);
             tvDistance = itemView.findViewById(R.id.tvDistance);
             ibFavorite = itemView.findViewById(R.id.ibFavorite);
+            tvCreatedBy = itemView.findViewById(R.id.tvCreatedBy);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -97,6 +99,9 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.ViewHolder
                             public void done(ParseException e) {
                                 if (e == null) {
                                     //good
+                                }else {
+                                    favorited = !favorited;
+                                    ibFavorite.setImageResource(R.drawable.ic_favorite_filled);
                                 }
                             }
                         });
@@ -110,6 +115,9 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.ViewHolder
                             public void done(ParseException e) {
                                 if (e == null) {
                                     //good
+                                } else {
+                                    favorited = !favorited;
+                                    ibFavorite.setImageResource(R.drawable.ic_favorite_empty);
                                 }
                             }
                         });
@@ -137,6 +145,13 @@ public class RoutesAdapter extends RecyclerView.Adapter<RoutesAdapter.ViewHolder
                 }
             }
             ibFavorite.setClickable(true);
+            try {
+                String creator = route.getUser().fetchIfNeeded().getUsername();
+                tvCreatedBy.setText("Created by: " + creator);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
         }
     }
 }

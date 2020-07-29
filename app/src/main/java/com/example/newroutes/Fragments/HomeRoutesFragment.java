@@ -20,49 +20,25 @@ import java.util.List;
 
 public class HomeRoutesFragment extends RoutesFragment{
 
-    private int query;
 
     @Override
     protected void queryRoutes() {
-        query = 2;
-        routes.clear();
         final ParseUser currentUser = ParseUser.getCurrentUser();
         List<Route> userRoutes = (ArrayList<Route>)currentUser.get("Routes");
         if (userRoutes == null) {
-            query--;
-        }
-        ArrayList<Route> favorites = (ArrayList<Route>)currentUser.get("Favorites");
-        if (favorites == null) {
-            query--;
-            if (query == 0) {
-                finishQuery();
-            }
+            finishQuery();
+            return;
         }
         ParseObject.fetchAllInBackground(userRoutes, new FindCallback<Route>() {
             @Override
             public void done(List<Route> objects, ParseException e) {
-                query--;
                 if (e == null) {
+                    routes.clear();
                     routes.addAll(objects);
+                    adapter.notifyDataSetChanged();
+                    finishQuery();
                 } else {
                     Log.e(TAG,"failed to fetch routes");
-                }
-                if (query == 0) {
-                    finishQuery();
-                }
-            }
-        });
-        ParseObject.fetchAllInBackground(favorites, new FindCallback<Route>() {
-            @Override
-            public void done(List<Route> fetchedFavorites, ParseException e) {
-                query--;
-                if (e == null) {
-                    routes.addAll(fetchedFavorites);
-                } else {
-                    Log.e(TAG,"failed to fetch favorites");
-                }
-                if (query == 0) {
-                    finishQuery();
                 }
             }
         });
@@ -78,7 +54,6 @@ public class HomeRoutesFragment extends RoutesFragment{
             ivEmpty.setVisibility(View.VISIBLE);
             tvEmpty.setVisibility(View.VISIBLE);
         }
-        adapter.notifyDataSetChanged();
     }
 
 

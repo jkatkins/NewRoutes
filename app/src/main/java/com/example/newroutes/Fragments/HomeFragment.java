@@ -31,6 +31,7 @@ public class HomeFragment extends Fragment {
     private HomeRoutesFragment homeRoutesFragment;
     private HomeFriendRequestsFragment homeFriendRequestsFragment;
     private HomeFriendsFragment homeFriendsFragment;
+    private HomeFavoritesFragment homeFavoritesFragment;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -60,6 +61,8 @@ public class HomeFragment extends Fragment {
         homeRoutesFragment = new HomeRoutesFragment();
         homeFriendRequestsFragment = new HomeFriendRequestsFragment();
         homeFriendsFragment = new HomeFriendsFragment();
+        homeFavoritesFragment = new HomeFavoritesFragment();
+
 
 
         tlTabs.setupWithViewPager(vpPager);
@@ -67,6 +70,7 @@ public class HomeFragment extends Fragment {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager(),0);
         vpPager.setAdapter(adapter);
         adapter.addFragment(homeRoutesFragment,"My Routes");
+        adapter.addFragment(homeFavoritesFragment,"Favorite Routes");
         adapter.addFragment(homeFriendRequestsFragment,"Friend Requests");
         adapter.addFragment(homeFriendsFragment,"Friends");
 
