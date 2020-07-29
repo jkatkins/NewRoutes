@@ -18,37 +18,67 @@ import com.parse.ParseUser;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class HomeRoutesFragment extends RoutesFragment{
+
+    private int query;
 
     @Override
     protected void queryRoutes() {
-        ParseUser currentUser = ParseUser.getCurrentUser();
+        query = 2;
+        routes.clear();
+        final ParseUser currentUser = ParseUser.getCurrentUser();
         List<Route> userRoutes = (ArrayList<Route>)currentUser.get("Routes");
         if (userRoutes == null) {
-            return;
+            query--;
+        }
+        ArrayList<Route> favorites = (ArrayList<Route>)currentUser.get("Favorites");
+        if (favorites == null) {
+            query--;
+            if (query == 0) {
+                finishQuery();
+            }
         }
         ParseObject.fetchAllInBackground(userRoutes, new FindCallback<Route>() {
             @Override
             public void done(List<Route> objects, ParseException e) {
-                swipeContainer.setRefreshing(false);
-                progressBar.setVisibility(View.GONE);
+                query--;
                 if (e == null) {
-                    routes.clear();
                     routes.addAll(objects);
-                    adapter.notifyDataSetChanged();
-                    if (!routes.isEmpty()) {
-                        ivEmpty.setVisibility(View.INVISIBLE);
-                        tvEmpty.setVisibility(View.INVISIBLE);
-                    } else {
-                        ivEmpty.setVisibility(View.VISIBLE);
-                        tvEmpty.setVisibility(View.VISIBLE);
-                    }
                 } else {
                     Log.e(TAG,"failed to fetch routes");
                 }
+                if (query == 0) {
+                    finishQuery();
+                }
             }
         });
+        ParseObject.fetchAllInBackground(favorites, new FindCallback<Route>() {
+            @Override
+            public void done(List<Route> fetchedFavorites, ParseException e) {
+                query--;
+                if (e == null) {
+                    routes.addAll(fetchedFavorites);
+                } else {
+                    Log.e(TAG,"failed to fetch favorites");
+                }
+                if (query == 0) {
+                    finishQuery();
+                }
+            }
+        });
+    }
+
+    private void finishQuery() {
+        swipeContainer.setRefreshing(false);
+        progressBar.setVisibility(View.GONE);
+        if (!routes.isEmpty()) {
+            ivEmpty.setVisibility(View.INVISIBLE);
+            tvEmpty.setVisibility(View.INVISIBLE);
+        } else {
+            ivEmpty.setVisibility(View.VISIBLE);
+            tvEmpty.setVisibility(View.VISIBLE);
+        }
+        adapter.notifyDataSetChanged();
     }
 
 

@@ -84,7 +84,6 @@ public class RoutesFragment extends Fragment implements RouteInterface {
         rvRoutes.setAdapter(adapter);
         rvRoutes.setLayoutManager(new GridLayoutManager(getContext(),2));
         progressBar.setVisibility(View.VISIBLE);
-        queryRoutes();
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
