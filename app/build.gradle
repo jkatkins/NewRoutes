@@ -36,15 +36,16 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
     implementation 'androidx.gridlayout:gridlayout:1.0.0'
+    implementation 'com.google.firebase:firebase-messaging:17.3.4'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
 
-
     //Parse dependencies
     implementation 'com.github.parse-community.Parse-SDK-Android:parse:1.24.2'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.8.1' // for logging API calls to LogCat
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.8.1'
+    // for logging API calls to LogCat
 
     //Mapbox dependencies
     implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.2.0'
@@ -68,6 +69,10 @@ dependencies {
     //Firebase
     implementation "com.github.parse-community.Parse-SDK-Android:fcm:1.25.0"
     implementation 'com.google.firebase:firebase-analytics:17.2.2'
+
+    //Coroutines
+    implementation "com.squareup.retrofit2:retrofit:2.6.2"
+    implementation "com.squareup.retrofit2:converter-gson:2.6.0"
 
 
 }

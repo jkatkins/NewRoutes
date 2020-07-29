@@ -15,7 +15,6 @@
 
         <TextView
             android:id="@+id/tvRouteName"
-            android:transitionName="nameTransition"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/ivMap"
@@ -23,7 +22,10 @@
             android:textAlignment="center"
             android:textColor="#000000"
             android:textSize="24sp"
-            tools:text="Unnamed Route 1" />
+            android:transitionName="nameTransition"
+            tools:text="Unnamed Route 1"
+            android:ellipsize="end"
+            android:maxLines="1"/>
 
         <ImageView
             android:id="@+id/ivMap"
@@ -33,7 +35,6 @@
 
         <TextView
             android:id="@+id/tvDistance"
-            android:transitionName="distanceTransition"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tvRouteName"
@@ -43,7 +44,20 @@
             android:text="TextView"
             android:textAlignment="center"
             android:textSize="18sp"
+            android:transitionName="distanceTransition"
             tools:text="5 Miles" />
+
+        <ImageButton
+            android:id="@+id/ibFavorite"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_below="@+id/tvDistance"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:background="#FFFFFF"
+            android:scaleType="centerCrop"
+            app:srcCompat="@drawable/ic_favorite_empty" />
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

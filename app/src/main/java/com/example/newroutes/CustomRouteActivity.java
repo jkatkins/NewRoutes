@@ -115,6 +115,7 @@ public class CustomRouteActivity extends AppCompatActivity implements OnMapReady
     private FrameLayout flSaveRoute;
     private Symbol lastLocation;
     private LatLng lastGenerated;
+    private boolean isActive = false;
     private ArrayList<Symbol> symbols = new ArrayList<>();
     private static final String DROPPED_MARKER_LAYER_ID = "DROPPED_MARKER_LAYER_ID";
     ActivityCustomRouteBinding binding;
@@ -179,9 +180,17 @@ public class CustomRouteActivity extends AppCompatActivity implements OnMapReady
                         btnStart.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
+                                if (isActive) {
+                                    resetRoute(style);
+                                    return;
+                                }
+                                isActive = true;
                                 LatLng targetLatLng = map.getCameraPosition().target;
                                 lastLocation = dropPin(targetLatLng);
                                 firstPoint = lastLocation;
+                                btnStart.setText(R.string.reset);
+                                btnSave.setVisibility(View.VISIBLE);
+                                btnSave.setClickable(true);
                                 Thread thread = new Thread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -199,6 +208,8 @@ public class CustomRouteActivity extends AppCompatActivity implements OnMapReady
                         btnSave.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
+                                btnSaveRoute.setVisibility(View.VISIBLE);
+                                btnSaveRoute.setClickable(true);
                                 LatLng targetLatLng = map.getCameraPosition().target;
                                 lastLocation = dropPin(targetLatLng);
                                 totalDistance += currentRoute.distance() * 0.000621371;
@@ -221,8 +232,8 @@ public class CustomRouteActivity extends AppCompatActivity implements OnMapReady
                 });
     }
 
-    private void resetRoute() {
-
+    private void resetRoute(Style style) {
+        finish(); //TODO improve this to actually clear the map and restart it
     }
 
     private void saveRoute() {

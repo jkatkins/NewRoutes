@@ -28,7 +28,9 @@ import com.example.newroutes.Adapters.RoutesAdapter;
 import com.example.newroutes.databinding.FragmentRoutesBinding;
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import org.parceler.Parcels;
 
@@ -39,6 +41,7 @@ public class RoutesFragment extends Fragment implements RouteInterface {
 
     public static final String TAG = "RoutesFragment";
     public ArrayList<Route> routes;
+    public ArrayList<Route> favorites;
     public RecyclerView rvRoutes;
     public RoutesAdapter adapter;
     public ImageView ivEmpty;
@@ -73,7 +76,11 @@ public class RoutesFragment extends Fragment implements RouteInterface {
         swipeContainer = binding.swipeContainer;
         progressBar = binding.progressBar;
         routes = new ArrayList<>();
-        adapter = new RoutesAdapter(getContext(),routes,this);
+        favorites = (ArrayList<Route>)ParseUser.getCurrentUser().get("Favorites");
+        if (favorites == null) {
+            favorites = new ArrayList<>();
+        }
+        adapter = new RoutesAdapter(getContext(),routes,favorites,this);
         rvRoutes.setAdapter(adapter);
         rvRoutes.setLayoutManager(new GridLayoutManager(getContext(),2));
         progressBar.setVisibility(View.VISIBLE);

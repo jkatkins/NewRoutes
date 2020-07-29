@@ -30,6 +30,7 @@ public class ViewUserProfileActivity extends AppCompatActivity implements RouteI
     private ImageView ivProfilePicture;
     private TextView tvUsername;
     private ArrayList<Route> routes;
+    public ArrayList<Route> favorites;
     private ParseUser user;
     public RoutesAdapter adapter;
     ActivityViewUserProfileBinding binding;
@@ -53,7 +54,11 @@ public class ViewUserProfileActivity extends AppCompatActivity implements RouteI
         ivProfilePicture = binding.ivProfilePicture;
         tvUsername = binding.tvUsername;
         routes = new ArrayList<>();
-        adapter = new RoutesAdapter(this,routes,this);
+        favorites = (ArrayList<Route>)ParseUser.getCurrentUser().get("Favorites");
+        if (favorites == null) {
+            favorites = new ArrayList<>();
+        }
+        adapter = new RoutesAdapter(this,routes,favorites,this);
         rvRoutes.setAdapter(adapter);
         rvRoutes.setLayoutManager(new GridLayoutManager(this,2));
         queryRoutes();
