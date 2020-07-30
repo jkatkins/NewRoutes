@@ -100,5 +100,6 @@ https://imgur.com/a/1avxA8B
 - [Add list of network requests by screen ]
 - [Create basic snippets for each Parse network request]
 - [OPTIONAL: List endpoints if using existing API such as Yelp]
-Useful api link to remember: https://docs.mapbox.com/help/tutorials/android-navigation-sdk/#add-a-marker-on-click
+Useful design links: https://github.com/tunitowen/fancy_bottom_navigation
+https://github.com/Solido/awesome-flutter
 
