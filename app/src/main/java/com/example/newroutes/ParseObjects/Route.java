@@ -14,6 +14,8 @@ public class Route extends ParseObject {
     public static final String KEY_LINESTRING = "Linestring";
     public static final String KEY_IMAGEURL = "ImageUrl";
     public static final String KEY_USER = "User";
+    public static final String KEY_DESCRITPION = "Description";
+    public static final String KEY_DIFFICULTY = "Difficulty";
 
 
     public String getName () {
@@ -50,6 +52,20 @@ public class Route extends ParseObject {
     }
     public void setUser(ParseUser user) {
         put(KEY_USER,user);
+    }
+
+    public String getDescription() {
+        return getString(KEY_DESCRITPION);
+    }
+    public void setDescription(String description) {
+        put(KEY_DESCRITPION,description);
+    }
+
+    public Float getDifficulty() {
+        return (Float) getNumber(KEY_DIFFICULTY);
+    }
+    public void setDifficulty(Float difficulty) {
+        put(KEY_DIFFICULTY,difficulty);
     }
 
 

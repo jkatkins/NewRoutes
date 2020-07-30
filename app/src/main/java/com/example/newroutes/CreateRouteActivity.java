@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RatingBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -97,6 +98,8 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
     private Button btnSave;
     private ProgressBar progressBar;
     private EditText etRouteName;
+    private EditText etDescription;
+    private RatingBar ratingBar;
     private TextView tvDistanceText; //TODO change these variable names, they are confusing
     private TextView tvDistance;
     private ImageView ivMap;
@@ -147,6 +150,8 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
         sbDistance = binding.sbDistance;
         tvDistance = binding.tvDistance;
         etRouteName = binding.etRouteName;
+        ratingBar = binding.ratingBar;
+        etDescription = binding.etDescription;
         ivMap = binding.ivMap;
         tvDistanceText = binding.tvDistanceText;
         btnSaveFinal = binding.btnSaveFinal;
@@ -310,6 +315,9 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                 route.setImageUrl(imageUrl);
                 route.setLinestring(coordinates);
                 route.setUser(ParseUser.getCurrentUser());
+                route.setDescription(etDescription.getText().toString());
+                Float difficulty = ratingBar.getRating();
+                route.setDifficulty(difficulty);
                 route.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {

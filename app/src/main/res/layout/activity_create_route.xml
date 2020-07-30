@@ -144,7 +144,7 @@
         android:layout_marginTop="0dp"
         android:clickable="false"
         android:elevation="3dp"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -193,7 +193,7 @@
                 android:textColor="#D5D5D5" />
 
             <EditText
-                android:id="@+id/editTextTextPersonName"
+                android:id="@+id/etDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tvDistanceText"
@@ -208,7 +208,7 @@
                 android:id="@+id/ratingBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/textView4"
+                android:layout_below="@+id/tvDifficulty"
                 android:layout_alignParentEnd="true"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="85dp" />
@@ -233,10 +233,10 @@
                 android:text="Out of breath" />
 
             <TextView
-                android:id="@+id/textView4"
+                android:id="@+id/tvDifficulty"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/editTextTextPersonName"
+                android:layout_below="@+id/etDescription"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="40dp"
                 android:text="Difficulty"
