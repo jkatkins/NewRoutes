@@ -2,6 +2,7 @@ package com.example.newroutes;
 
 import android.app.Application;
 
+import com.example.newroutes.ParseObjects.Comment;
 import com.example.newroutes.ParseObjects.FriendsManager;
 import com.example.newroutes.ParseObjects.Route;
 import com.parse.Parse;
@@ -15,6 +16,7 @@ public class ParseApplication extends Application {
 
         ParseObject.registerSubclass(Route.class);
         ParseObject.registerSubclass(FriendsManager.class);
+        ParseObject.registerSubclass(Comment.class);
 
         // set applicationId, and server server based on the values in the Heroku settings.
         // clientKey is not needed unless explicitly configured

@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:visibility="visible"
     tools:context=".CreateRouteActivity">
 
     <com.mapbox.mapboxsdk.maps.MapView
@@ -83,8 +84,8 @@
         android:layout_above="@+id/cvOptions"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:visibility="gone"
-        android:layout_marginBottom="0dp" />
+        android:layout_marginBottom="0dp"
+        android:visibility="gone" />
 
     <LinearLayout
         android:id="@+id/llDistance"
@@ -139,15 +140,13 @@
         android:id="@+id/flSaveRoute"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
         android:layout_alignTop="@+id/cvOptions"
         android:layout_marginTop="0dp"
         android:clickable="false"
-        android:elevation="3dp">
+        android:elevation="3dp"
+        android:visibility="visible">
 
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#FFFFFF">
@@ -186,12 +185,63 @@
                 android:id="@+id/btnSaveFinal"
                 android:layout_width="257dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tvDistanceText"
+                android:layout_alignParentBottom="true"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
                 android:background="@color/colorPrimaryDark"
                 android:text="Save"
                 android:textColor="#D5D5D5" />
+
+            <EditText
+                android:id="@+id/editTextTextPersonName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tvDistanceText"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="0dp"
+                android:ems="10"
+                android:hint="Add a description"
+                android:inputType="textPersonName"
+                android:textAlignment="center" />
+
+            <RatingBar
+                android:id="@+id/ratingBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textView4"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="85dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/ratingBar"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="0dp"
+                android:text="Walk in the park" />
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/ratingBar"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="2dp"
+                android:text="Out of breath" />
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/editTextTextPersonName"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="40dp"
+                android:text="Difficulty"
+                android:textColor="#000000"
+                android:textSize="20sp" />
 
         </RelativeLayout>
 

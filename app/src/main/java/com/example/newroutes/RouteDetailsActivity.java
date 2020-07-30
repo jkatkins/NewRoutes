@@ -5,10 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.transition.Scene;
+import android.view.View;
 import android.widget.TextView;
 
 import com.example.newroutes.ParseObjects.Route;
@@ -45,8 +47,12 @@ public class RouteDetailsActivity extends AppCompatActivity implements OnMapRead
     private MapView mapView;
     private TextView tvDistance;
     private TextView tvRouteName;
+    private CardView cvInfoContainerOpen;
+    private TextView tvDistanceOpen;
+    private TextView tvRouteNameOpen;
     private Route route;
     ActivityRouteDetailsBinding binding;
+    private boolean detailsOpened = false;
 
     private Scene s1;
 
@@ -69,14 +75,34 @@ public class RouteDetailsActivity extends AppCompatActivity implements OnMapRead
         mapView = binding.mapView;
         tvDistance = binding.tvDistance;
         tvRouteName = binding.tvRouteName;
+        cvInfoContainerOpen = binding.cvInfoContainerOpen;
+        tvDistanceOpen = binding.tvDistanceOpen;
+        tvRouteNameOpen = binding.tvRouteNameOpen;
 
         DecimalFormat df = new DecimalFormat("#.##");
         String distance = df.format(route.getDistance());
         tvDistance.setText(distance + " miles");
         tvRouteName.setText(route.getName());
+        tvDistanceOpen.setText(distance + " miles");
+        tvRouteNameOpen.setText(route.getName());
 
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
+
+        cvInfoContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cvInfoContainer.setVisibility(View.GONE);
+                cvInfoContainerOpen.setVisibility(View.VISIBLE);
+            }
+        });
+        cvInfoContainerOpen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cvInfoContainerOpen.setVisibility(View.GONE);
+                cvInfoContainer.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     @Override
