@@ -16,6 +16,7 @@ public class Route extends ParseObject {
     public static final String KEY_USER = "User";
     public static final String KEY_DESCRITPION = "Description";
     public static final String KEY_DIFFICULTY = "Difficulty";
+    public static final String KEY_COMMENTS = "Comments";
 
 
     public String getName () {
@@ -68,5 +69,11 @@ public class Route extends ParseObject {
         put(KEY_DIFFICULTY,difficulty);
     }
 
+    public ArrayList<Comment> getComments() {
+        return (ArrayList<Comment>)get(KEY_COMMENTS);
+    }
+    public void addComment(Comment comment) {
+        add(KEY_COMMENTS,comment);
+    }
 
 }

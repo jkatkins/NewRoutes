@@ -45,7 +45,7 @@
         android:layout_height="80dp"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="0dp"
-        android:visibility="invisible"
+        android:visibility="visible"
         app:cardCornerRadius="10dp">
 
         <LinearLayout
@@ -108,7 +108,7 @@
                 tools:text="5.23 miles" />
 
             <TextView
-                android:id="@+id/textView"
+                android:id="@+id/tvDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="#000000"
@@ -118,7 +118,7 @@
                 android:id="@+id/rvComments"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginBottom="50dp">
+                android:layout_marginBottom="100dp">
 
             </androidx.recyclerview.widget.RecyclerView>
 
@@ -126,10 +126,17 @@
                 android:id="@+id/etAddComment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="-50dp"
+                android:layout_marginTop="-100dp"
                 android:ems="10"
                 android:hint="Add a comment ting"
                 android:inputType="textPersonName" />
+
+            <Button
+                android:id="@+id/btnSubmit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="-100dp"
+                android:text="Submit" />
 
         </LinearLayout>
 
