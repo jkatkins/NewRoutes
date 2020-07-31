@@ -69,6 +69,7 @@ dependencies {
     //Firebase
     implementation "com.github.parse-community.Parse-SDK-Android:fcm:1.25.0"
     implementation 'com.google.firebase:firebase-analytics:17.2.2'
+    implementation 'com.google.firebase:firebase-messaging:20.2.4'
 
     //Coroutines
     implementation "com.squareup.retrofit2:retrofit:2.6.2"

@@ -24,7 +24,8 @@ public class ParseApplication extends Application {
         Parse.initialize(new Parse.Configuration.Builder(this)
                 .applicationId("newroutes") // should correspond to APP_ID env variable
                 .clientKey("183945701345")  // set explicitly unless clientKey is explicitly configured on Parse server
-                .server("https://new-routes.herokuapp.com/parse").build());
+                .server("https://new-routes.herokuapp.com/parse")
+                .build());
 
         ParseInstallation.getCurrentInstallation().saveInBackground();
     }

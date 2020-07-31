@@ -21,4 +21,5 @@
     <string name="request_sent">Request Sent</string>
     <string name="no_routes">You don\'t have any routes. Click here to create some!</string>
     <string name="respond">Respond</string>
+    <string name="msg_token_fmt" translatable="false">InstanceID Token: %s</string>
 </resources>
