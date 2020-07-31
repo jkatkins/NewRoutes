@@ -22,6 +22,8 @@ import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
@@ -98,6 +100,43 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
                     Log.i(TAG,"sent friend request"); //TODO add error handling, disable after friend request has been sent
                 }
             });
+        }
+
+        private void sendFCMPush() {
+
+            String Legacy_SERVER_KEY = "";
+            String msg = "this is test message,.,,.,.";
+            String title = "my title";
+            String token = "";
+
+            JSONObject obj = null;
+            JSONObject objData = null;
+            JSONObject dataobjData = null;
+
+            try {
+                obj = new JSONObject();
+                objData = new JSONObject();
+
+                objData.put("body", msg);
+                objData.put("title", title);
+                objData.put("sound", "default");
+                objData.put("icon", "icon_name"); //   icon_name image must be there in drawable
+                objData.put("tag", token);
+                objData.put("priority", "high");
+
+                dataobjData = new JSONObject();
+                dataobjData.put("text", msg);
+                dataobjData.put("title", title);
+
+                obj.put("to", token);
+                //obj.put("priority", "high");
+
+                obj.put("notification", objData);
+                obj.put("data", dataobjData);
+                Log.e("!_@rj@_@@_PASS:>", obj.toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
         public void bind(ParseUser newUser) {

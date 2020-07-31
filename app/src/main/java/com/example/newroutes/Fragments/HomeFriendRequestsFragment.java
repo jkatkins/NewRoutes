@@ -130,7 +130,7 @@ public class HomeFriendRequestsFragment extends Fragment {
                         } else {
                             Log.e(TAG,e.toString());
                         }
-                        badgeDrawable = tlTabs.getTabAt(1).getOrCreateBadge();
+                        badgeDrawable = tlTabs.getTabAt(2).getOrCreateBadge();
                         badgeDrawable.setNumber(friendRequests.size());
                         badgeDrawable.setVisible(true);
                     }

@@ -8,6 +8,9 @@ import com.example.newroutes.ParseObjects.Route;
 import com.parse.Parse;
 import com.parse.ParseInstallation;
 import com.parse.ParseObject;
+import com.parse.ParseUser;
+
+import java.util.ArrayList;
 
 public class ParseApplication extends Application {
     @Override
@@ -27,7 +30,14 @@ public class ParseApplication extends Application {
                 .server("https://new-routes.herokuapp.com/parse")
                 .build());
 
-        ParseInstallation.getCurrentInstallation().saveInBackground();
+        ArrayList<String> channels = new ArrayList<>();
+        channels.add("News");
+        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+// don't forget to change the line below with the sender ID you obtained at Firebase
+        installation.put("GCMSenderId", getString(R.string.sender_Id));
+        installation.put("channels", channels);
+        installation.put("User", ParseUser.getCurrentUser());
+        installation.saveInBackground();
     }
 
 

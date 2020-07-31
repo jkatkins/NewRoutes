@@ -22,4 +22,5 @@
     <string name="no_routes">You don\'t have any routes. Click here to create some!</string>
     <string name="respond">Respond</string>
     <string name="msg_token_fmt" translatable="false">InstanceID Token: %s</string>
+    <string name="sender_Id">313755971805</string>
 </resources>

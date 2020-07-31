@@ -87,7 +87,7 @@ public class FriendRequestsAdapter extends RecyclerView.Adapter<FriendRequestsAd
                             public void done(ParseException e) {
                                 //update friend here
                                 Log.i(TAG,"current save success");
-                                String tag = "android:switcher:" + R.id.vpPager + ":" + 2;
+                                String tag = "android:switcher:" + R.id.vpPager + ":" + 3;
                                 HomeFriendsFragment homeFriendsFragment = (HomeFriendsFragment)(((MainActivity)context).getSupportFragmentManager()
                                         .findFragmentById(R.id.flContainer).getChildFragmentManager().findFragmentByTag(tag));
                                 try {
@@ -104,7 +104,7 @@ public class FriendRequestsAdapter extends RecyclerView.Adapter<FriendRequestsAd
                         senderFriendsManager.saveInBackground();
                         friendRequests.remove(getAdapterPosition());
                         notifyItemRemoved(getAdapterPosition());
-                        String tag = "android:switcher:" + R.id.vpPager + ":" + 1;
+                        String tag = "android:switcher:" + R.id.vpPager + ":" + 2;
                         HomeFriendRequestsFragment homeFriendRequestsFragment = (HomeFriendRequestsFragment)(((MainActivity)context).getSupportFragmentManager()
                                 .findFragmentById(R.id.flContainer).getChildFragmentManager().findFragmentByTag(tag));
                         homeFriendRequestsFragment.updateBadge();
@@ -128,7 +128,7 @@ public class FriendRequestsAdapter extends RecyclerView.Adapter<FriendRequestsAd
                         currentFriendsManager.saveInBackground();  //TODO Error handling
                         friendRequests.remove(getAdapterPosition());
                         notifyItemRemoved(getAdapterPosition());
-                        String tag = "android:switcher:" + R.id.vpPager + ":" + 1;
+                        String tag = "android:switcher:" + R.id.vpPager + ":" + 2;
                         HomeFriendRequestsFragment homeFriendRequestsFragment = (HomeFriendRequestsFragment)(((MainActivity)context).getSupportFragmentManager()
                                 .findFragmentById(R.id.flContainer).getChildFragmentManager().findFragmentByTag(tag));
                         homeFriendRequestsFragment.updateBadge();
