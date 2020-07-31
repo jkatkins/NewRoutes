@@ -3,6 +3,7 @@ package com.example.newroutes;
 import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
+import com.google.firebase.messaging.RemoteMessage;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
@@ -25,6 +26,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private void sendRegistrationToServer(String token) {
         // TODO: Implement this method to send token to your app server.
     }
+
+    @Override
+    public void onMessageReceived(RemoteMessage remoteMessage) {
+    }
+
 
 
 }
