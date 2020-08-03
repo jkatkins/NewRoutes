@@ -18,8 +18,8 @@ exports.sendNotification = functions.https.onCall((data,context) => {
     const token = data.token;
       var payload = {
                         "notification":{
-                          "title":"Portugal vs. Denmark",
-                          "body":"great match!"
+                          "title":"Friend Request",
+                          "body":"You have a new friend request"
                         }
                       }
     admin.messaging().sendToDevice(token,payload)
