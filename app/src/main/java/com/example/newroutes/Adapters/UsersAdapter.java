@@ -18,6 +18,10 @@ import com.example.newroutes.ParseObjects.FriendsManager;
 import com.example.newroutes.ParseObjects.Route;
 import com.example.newroutes.R;
 import com.example.newroutes.ViewUserProfileActivity;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.functions.FirebaseFunctions;
+import com.google.firebase.functions.HttpsCallableResult;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
@@ -27,6 +31,8 @@ import org.json.JSONObject;
 import org.parceler.Parcels;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> {
 
@@ -36,6 +42,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
     ArrayList<ParseUser> friends;
     ArrayList<ParseUser> outgoingRequests;
     ArrayList<ParseUser> incomingRequests;
+    private FirebaseFunctions mFunctions;
 
     public UsersAdapter(Context context, ArrayList<ParseUser> users,ArrayList<ParseUser> friends,ArrayList<ParseUser> outgoingRequests,ArrayList<ParseUser> incomingRequests) {
         this.context = context;
@@ -43,6 +50,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
         this.friends = friends;
         this.outgoingRequests = outgoingRequests;
         this.incomingRequests = incomingRequests;
+        mFunctions = FirebaseFunctions.getInstance();
     }
 
     @NonNull
@@ -98,45 +106,36 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
                     friendsManagerCurrent.saveInBackground();
                     friendsManagerRecipient.saveInBackground();
                     Log.i(TAG,"sent friend request"); //TODO add error handling, disable after friend request has been sent
+                    try {
+                        addMessage("nothing");
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                 }
             });
         }
+        //citDXnVhRWysJMlZuCfM23:APA91bHZ2odcUDSV2ropuEJwQCc2CHcyLCfUX1SXcqbEFgg9nQDHBxPKj_ddr6GHQJ3bvFh3UpLQ6voj-x8mL2qisW-IawQH8vqH6_njRvZT_SqGi1lLHLOvNB1t9rXdBZA410-jnLKm
 
-        private void sendFCMPush() {
+        private Task<String> addMessage(String text) throws ParseException {
+            // Create the arguments to the callable function.
+            Map<String, Object> data = new HashMap<>();
+            String token = user.fetchIfNeeded().getString("Token");
+            data.put("token", token);
+            data.put("push", true);
 
-            String Legacy_SERVER_KEY = "";
-            String msg = "this is test message,.,,.,.";
-            String title = "my title";
-            String token = "";
-
-            JSONObject obj = null;
-            JSONObject objData = null;
-            JSONObject dataobjData = null;
-
-            try {
-                obj = new JSONObject();
-                objData = new JSONObject();
-
-                objData.put("body", msg);
-                objData.put("title", title);
-                objData.put("sound", "default");
-                objData.put("icon", "icon_name"); //   icon_name image must be there in drawable
-                objData.put("tag", token);
-                objData.put("priority", "high");
-
-                dataobjData = new JSONObject();
-                dataobjData.put("text", msg);
-                dataobjData.put("title", title);
-
-                obj.put("to", token);
-                //obj.put("priority", "high");
-
-                obj.put("notification", objData);
-                obj.put("data", dataobjData);
-                Log.e("!_@rj@_@@_PASS:>", obj.toString());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            return mFunctions
+                    .getHttpsCallable("sendNotification")
+                    .call(data)
+                    .continueWith(new Continuation<HttpsCallableResult, String>() {
+                        @Override
+                        public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
+                            // This continuation runs on either success or failure, but if the task
+                            // has failed then getResult() will throw an Exception which will be
+                            // propagated down.
+                            String result = (String) task.getResult().getData();
+                            return result;
+                        }
+                    });
         }
 
         public void bind(ParseUser newUser) {

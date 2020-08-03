@@ -99,6 +99,8 @@ public class MainActivity extends AppCompatActivity {
 
                         // Get new Instance ID token
                         String token = task.getResult().getToken();
+                        ParseUser.getCurrentUser().put("Token",token);
+                        ParseUser.getCurrentUser().saveInBackground();
 
                         // Log and toast
                         String msg = getString(R.string.msg_token_fmt, token);
