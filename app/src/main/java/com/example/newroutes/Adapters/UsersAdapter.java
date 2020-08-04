@@ -104,13 +104,21 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
                     friendsManagerCurrent.addOutgoing(user);
                     friendsManagerRecipient.addIncoming(currentUser);
                     friendsManagerCurrent.saveInBackground();
-                    friendsManagerRecipient.saveInBackground();
+                    friendsManagerRecipient.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e == null) {
+                                try {
+                                    addMessage("nothing");
+                                } catch (ParseException innerParseException) {
+                                    innerParseException.printStackTrace();
+                                }
+                            } else {
+                                //error
+                            }
+                        }
+                    });
                     Log.i(TAG,"sent friend request"); //TODO add error handling, disable after friend request has been sent
-                    try {
-                        addMessage("nothing");
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
                 }
             });
         }
@@ -122,6 +130,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.ViewHolder> 
             String token = user.fetchIfNeeded().getString("Token");
             data.put("token", token);
             data.put("push", true);
+            data.put("username",ParseUser.getCurrentUser().getString("username"));
 
             return mFunctions
                     .getHttpsCallable("sendNotification")

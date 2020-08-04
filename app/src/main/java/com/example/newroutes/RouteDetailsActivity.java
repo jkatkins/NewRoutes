@@ -39,6 +39,7 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.parse.livequery.ParseLiveQueryClient;
 
 import org.parceler.Parcels;
 
@@ -165,6 +166,19 @@ public class RouteDetailsActivity extends AppCompatActivity implements OnMapRead
                 });
             }
         });
+
+        ParseLiveQueryClient parseLiveQueryClient = ParseLiveQueryClient.Factory.getClient();
+//
+//        ParseQuery<Comment> parseQuery = ParseQuery.getQuery(Comment.class);
+//
+//        SubscriptionHandling<Comment> subscriptionHandling = parseLiveQueryClient.subscribe(parseQuery);
+//
+//        subscriptionHandling.handleEvent(SubscriptionHandling.Event.CREATE, new SubscriptionHandling.HandleEventCallback<Comment>() {
+//            @Override
+//            public void onEvent(ParseQuery<Comment> query, Comment object) {
+//                queryComments();
+//            }
+//        });
     }
 
     private void queryComments() {

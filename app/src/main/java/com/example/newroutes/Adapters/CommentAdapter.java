@@ -39,7 +39,6 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Log.e(TAG,"holder binding");
         Comment newComment = comments.get(position);
         try {
             holder.bind(newComment);

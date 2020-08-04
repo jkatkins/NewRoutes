@@ -36,7 +36,6 @@ public class ParseApplication extends Application {
 // don't forget to change the line below with the sender ID you obtained at Firebase
         installation.put("GCMSenderId", getString(R.string.sender_Id));
         installation.put("channels", channels);
-        installation.put("User", ParseUser.getCurrentUser());
         installation.saveInBackground();
     }
 

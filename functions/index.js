@@ -16,10 +16,11 @@ admin.initializeApp();
 
 exports.sendNotification = functions.https.onCall((data,context) => {
     const token = data.token;
+    const username = data.username;
       var payload = {
                         "notification":{
                           "title":"Friend Request",
-                          "body":"You have a new friend request"
+                          "body":"You have a new friend request from ".concat(username)
                         }
                       }
     admin.messaging().sendToDevice(token,payload)
