@@ -27,9 +27,11 @@ public class RandomTutorialFragment extends Fragment {
     private TextView tvPageCounter;
     private ImageView ivGif;
     private TextView tvInstructions;
+    private ImageButton ibClose;
     private int pageNumber = 1;
     private int numPages = 3;
     private int[] instructions = {R.string.random_page_1,R.string.random_page_2,R.string.random_page_3};
+    private String[] gifs = {"https://i.imgur.com/OeOOh63.gif","https://i.imgur.com/6WKXc6h.gif","https://i.imgur.com/PXmRSoS.gif"};
     FragmentRandomTutorialBinding binding;
 
     public RandomTutorialFragment() {
@@ -56,6 +58,7 @@ public class RandomTutorialFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ibLeft = binding.ibLeft;
         ibRight = binding.ibRight;
+        ibClose = binding.ibClose;
         tvInstructions = binding.tvInstructions;
         tvPageCounter = binding.tvPageCounter;
         ivGif = binding.ivGif;
@@ -63,9 +66,8 @@ public class RandomTutorialFragment extends Fragment {
         tvInstructions.setText(getString(instructions[0]));
         ibLeft.setVisibility(View.INVISIBLE);
         tvPageCounter.setText(pageNumber + "/" + numPages);
-        String gifUrl = "https://i.imgur.com/OeOOh63.gif";
 
-        Glide.with(this).load(gifUrl).into(ivGif);
+        Glide.with(getContext()).load(gifs[pageNumber-1]).into(ivGif);
 
         ibRight.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,6 +79,7 @@ public class RandomTutorialFragment extends Fragment {
                 if (pageNumber == numPages) {
                     ibRight.setVisibility(View.INVISIBLE);
                 }
+                Glide.with(getContext()).load(gifs[pageNumber-1]).into(ivGif);
             }
         });
         ibLeft.setOnClickListener(new View.OnClickListener() {
@@ -89,6 +92,13 @@ public class RandomTutorialFragment extends Fragment {
                 if (pageNumber == 1) {
                     ibLeft.setVisibility(View.INVISIBLE);
                 }
+                Glide.with(getContext()).load(gifs[pageNumber-1]).into(ivGif);
+            }
+        });
+        ibClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().getSupportFragmentManager().beginTransaction().remove(RandomTutorialFragment.this).commit();
             }
         });
 
