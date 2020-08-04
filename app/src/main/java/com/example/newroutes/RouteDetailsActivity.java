@@ -75,6 +75,7 @@ public class RouteDetailsActivity extends AppCompatActivity implements OnMapRead
     private Route route;
     private CommentAdapter adapter;
     private List<Comment> comments;
+    private Comment recentComment;
     ActivityRouteDetailsBinding binding;
     private boolean detailsOpened = false;
 
@@ -141,11 +142,20 @@ public class RouteDetailsActivity extends AppCompatActivity implements OnMapRead
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (etAddComment.getText().toString().isEmpty()) {
+                    return;
+                }
+                btnSubmit.setClickable(false);
                 String commentContent = etAddComment.getText().toString();
+                etAddComment.setText("");
                 final Comment comment = new Comment();
                 comment.setContent(commentContent);
                 comment.setCreator(ParseUser.getCurrentUser());
                 comment.setRoute(route);
+                recentComment = comment;
+                comments.add(comment);
+                adapter.notifyItemInserted(comments.size()-1);
+                btnSubmit.setClickable(true);
                 comment.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
@@ -155,10 +165,7 @@ public class RouteDetailsActivity extends AppCompatActivity implements OnMapRead
                             route.saveInBackground(new SaveCallback() {
                                 @Override
                                 public void done(ParseException e) {
-                                    if (e == null) {
-                                        comments.add(comment);
-                                        adapter.notifyDataSetChanged();
-                                    }
+                                    //Do nothing, now handled in live query to avoid duping comments
                                 }
                             });
                         } else {
@@ -175,12 +182,22 @@ public class RouteDetailsActivity extends AppCompatActivity implements OnMapRead
 
         SubscriptionHandling<Comment> subscriptionHandling = parseLiveQueryClient.subscribe(parseQuery);
 
-//        subscriptionHandling.handleEvent(SubscriptionHandling.Event.CREATE, new SubscriptionHandling.HandleEventCallback<Comment>() {
-//            @Override
-//            public void onEvent(ParseQuery<Comment> query, Comment object) {
-//                queryComments();
-//            }
-//        });
+        subscriptionHandling.handleEvent(SubscriptionHandling.Event.CREATE, new SubscriptionHandling.HandleEventCallback<Comment>() {
+            @Override
+            public void onEvent(ParseQuery<Comment> query, final Comment object) {
+                if (object.getRoute().getObjectId().equals(route.getObjectId()) &&
+                        (recentComment == null || !(recentComment.getObjectId().equals(object.getObjectId())))) { //comment is for this route, comment wasn't added by this user
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            comments.add(object);
+                            adapter.notifyItemInserted(comments.size()-1);
+                        }
+                    });
+
+                }
+            }
+        });
     }
 
     private void queryComments() {
