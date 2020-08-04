@@ -13,10 +13,13 @@
         android:title="Routes"
         app:showAsAction="always" />
     <item
-        android:id="@+id/item_new"
-        android:icon="@drawable/ic_add"
-        android:title="New"
-        app:showAsAction="always" />
+        android:id="@+id/action_empty"
+        android:title=""
+        android:checkable="false"
+        android:checked="false"
+        app:showAsAction="always"
+        android:enabled="false"
+        />
     <item
         android:id="@+id/item_friends"
         android:icon="@drawable/ic_friends"

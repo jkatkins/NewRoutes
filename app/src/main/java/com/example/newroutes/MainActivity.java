@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
@@ -22,6 +23,7 @@ import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.functions.FirebaseFunctions;
 import com.google.firebase.functions.HttpsCallableResult;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -39,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private FrameLayout flContainer;
     private BottomNavigationView bottomNavigationView;
+    private FloatingActionButton fab;
     private FirebaseFunctions mFunctions;
 
     @Override
@@ -52,6 +55,15 @@ public class MainActivity extends AppCompatActivity {
 
         flContainer = binding.flContainer;
         bottomNavigationView = binding.bottomNavigation;
+        fab = binding.fab;
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent createIntent = new Intent(MainActivity.this,RouteOptionsActivity.class);
+                startActivity(createIntent);
+            }
+        });
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -59,10 +71,6 @@ public class MainActivity extends AppCompatActivity {
                 Fragment fragment = null;
                 String tag = "";
                 switch(item.getItemId()) {
-                    case R.id.item_new:
-                        Intent createIntent = new Intent(MainActivity.this,RouteOptionsActivity.class);
-                        startActivity(createIntent);
-                        return false;
                     case R.id.item_friends: //TODO fill this out
                         fragment = new UsersFragment();
                         break;
