@@ -37,9 +37,11 @@ import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.livequery.ParseLiveQueryClient;
+import com.parse.livequery.SubscriptionHandling;
 
 import org.parceler.Parcels;
 
@@ -168,11 +170,11 @@ public class RouteDetailsActivity extends AppCompatActivity implements OnMapRead
         });
 
         ParseLiveQueryClient parseLiveQueryClient = ParseLiveQueryClient.Factory.getClient();
-//
-//        ParseQuery<Comment> parseQuery = ParseQuery.getQuery(Comment.class);
-//
-//        SubscriptionHandling<Comment> subscriptionHandling = parseLiveQueryClient.subscribe(parseQuery);
-//
+
+        ParseQuery<Comment> parseQuery = ParseQuery.getQuery(Comment.class);
+
+        SubscriptionHandling<Comment> subscriptionHandling = parseLiveQueryClient.subscribe(parseQuery);
+
 //        subscriptionHandling.handleEvent(SubscriptionHandling.Event.CREATE, new SubscriptionHandling.HandleEventCallback<Comment>() {
 //            @Override
 //            public void onEvent(ParseQuery<Comment> query, Comment object) {

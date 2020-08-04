@@ -41,11 +41,11 @@ dependencies {
 
 
     //Parse dependencies
-    implementation 'com.github.parse-community.Parse-SDK-Android:parse:1.24.2'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.8.1'
-    //implementation 'com.github.parse-community.Parse-SDK-Android:parse:1.18.5'
-    implementation 'com.github.parse-community:ParseLiveQuery-Android:1.2.1'
+    //implementation 'com.github.parse-community.Parse-SDK-Android:parse:1.24.2'
+    implementation 'com.github.parse-community.Parse-SDK-Android:parse:1.18.5'
+    implementation 'com.github.parse-community:ParseLiveQuery-Android:1.1.0'
     // for logging API calls to LogCat
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.8.1'
 
     //Mapbox dependencies
     implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.2.0'

@@ -9,7 +9,10 @@ import com.parse.Parse;
 import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
+import com.parse.livequery.ParseLiveQueryClient;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 public class ParseApplication extends Application {
@@ -29,6 +32,7 @@ public class ParseApplication extends Application {
                 .clientKey("183945701345")  // set explicitly unless clientKey is explicitly configured on Parse server
                 .server("https://new-routes.herokuapp.com/parse")
                 .build());
+
 
         ArrayList<String> channels = new ArrayList<>();
         channels.add("News");
