@@ -3,6 +3,7 @@ package com.example.newroutes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.graphics.Color;
@@ -21,6 +22,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.newroutes.Fragments.RandomTutorialFragment;
 import com.example.newroutes.ParseObjects.Route;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -105,6 +107,7 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
     private TextView tvDistance;
     private ImageView ivMap;
     private Button btnSaveFinal;
+    private FrameLayout flInstructions;
     private ImageView hoveringMarker;
     private SymbolManager symbolManager;
     private Symbol symbol1 = null;
@@ -150,6 +153,7 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
         flSaveRoute = binding.flSaveRoute;
         sbDistance = binding.sbDistance;
         tvDistance = binding.tvDistance;
+        flInstructions = binding.flInstructions;
         etRouteName = binding.etRouteName;
         ratingBar = binding.ratingBar;
         etDescription = binding.etDescription;
@@ -249,6 +253,10 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                         });
                     }
                 });
+
+        Fragment fragment = new RandomTutorialFragment();
+        FragmentManager fm = getSupportFragmentManager();
+        fm.beginTransaction().replace(flInstructions.getId(),fragment).commit();
     }
 
     private void initLayers(@NonNull Style loadedMapStyle) {

@@ -166,4 +166,19 @@
 
     </FrameLayout>
 
+    <FrameLayout
+        android:id="@+id/flInstructions"
+        android:layout_width="match_parent"
+        android:layout_height="651dp"
+        android:layout_below="@+id/toolbar"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="10dp">
+
+    </FrameLayout>
+
 </RelativeLayout>

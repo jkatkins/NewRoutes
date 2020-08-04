@@ -3,6 +3,7 @@ package com.example.newroutes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.content.Context;
@@ -20,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.newroutes.Fragments.RandomTutorialFragment;
 import com.example.newroutes.ParseObjects.Route;
 import com.example.newroutes.databinding.ActivityCustomRouteBinding;
 import com.google.gson.JsonArray;
@@ -101,6 +103,7 @@ public class CustomRouteActivity extends AppCompatActivity implements OnMapReady
     private Button btnSave;
     private Button btnSaveRoute;
     private EditText etRouteName;
+    private FrameLayout flInstructions;
     private TextView tvDistanceText;
     private ImageView ivMap;
     private Button btnSaveFinal;
@@ -146,6 +149,7 @@ public class CustomRouteActivity extends AppCompatActivity implements OnMapReady
         tvDistanceText = binding.tvDistanceText;
         btnSaveFinal = binding.btnSaveFinal;
         mapView = binding.mapView;
+        flInstructions = binding.flInstructions;
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
     }
@@ -229,6 +233,10 @@ public class CustomRouteActivity extends AppCompatActivity implements OnMapReady
                                 saveRoute();
                             }
                         });
+
+                        Fragment fragment = new RandomTutorialFragment();
+                        FragmentManager fm = getSupportFragmentManager();
+                        fm.beginTransaction().replace(flInstructions.getId(),fragment).commit();
                     }
                 });
     }

@@ -23,4 +23,7 @@
     <string name="respond">Respond</string>
     <string name="msg_token_fmt" translatable="false">InstanceID Token: %s</string>
     <string name="sender_Id">313755971805</string>
+    <string name="random_page_1"><![CDATA["Pan & zoom map under pin, then press Choose Origin. "]]></string>
+    <string name="random_page_2">Use the distance slider to select a target distance</string>
+    <string name="random_page_3">Finish generation, or reset to restart the process.</string>
 </resources>
