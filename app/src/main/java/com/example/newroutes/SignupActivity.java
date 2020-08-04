@@ -18,6 +18,8 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 
+import es.dmoral.toasty.Toasty;
+
 public class SignupActivity extends AppCompatActivity {
 
     EditText etUsername;
@@ -53,11 +55,11 @@ public class SignupActivity extends AppCompatActivity {
         //TODO add case for duplicate username
         //TODO add password requirements
         if (username.isEmpty()) {
-            Toast.makeText(this, R.string.empty_username, Toast.LENGTH_SHORT).show();
+            Toasty.error(this,R.string.empty_username,Toast.LENGTH_SHORT).show();
         } else if (password.isEmpty()) {
-            Toast.makeText(this, R.string.empty_password, Toast.LENGTH_SHORT).show();
+            Toasty.error(this, R.string.empty_password, Toast.LENGTH_SHORT).show();
         } else if (!(password.equals(confirmPassword))) {
-            Toast.makeText(this, R.string.passowrd_mismatch, Toast.LENGTH_SHORT).show();
+            Toasty.error(this, R.string.passowrd_mismatch, Toast.LENGTH_SHORT).show();
         } else {
             final ParseUser user = new ParseUser();
             // Set core properties
@@ -72,17 +74,17 @@ public class SignupActivity extends AppCompatActivity {
                         user.signUpInBackground(new SignUpCallback() {
                             public void done(ParseException e) {
                                 if (e == null) {
-                                    Toast.makeText(SignupActivity.this, "Account Created", Toast.LENGTH_SHORT).show();
+                                    Toasty.success(SignupActivity.this, "Account Created", Toast.LENGTH_SHORT).show();
                                     Intent i = new Intent(SignupActivity.this,MainActivity.class);
                                     i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     startActivity(i);
                                 } else {
-                                    Toast.makeText(SignupActivity.this, "Error signing up, " + e, Toast.LENGTH_SHORT).show();
+                                    Toasty.error(SignupActivity.this, "Error signing up, " + e, Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
                     } else {
-                        Toast.makeText(SignupActivity.this, "Error signing up, " + e, Toast.LENGTH_SHORT).show();
+                        Toasty.error(SignupActivity.this, "Error signing up, " + e, Toast.LENGTH_SHORT).show();
                     }
                 }
             });

@@ -76,6 +76,7 @@ import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import es.dmoral.toasty.Toasty;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -327,10 +328,10 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                                 @Override
                                 public void done(ParseException e) {
                                     if (e == null) {
-                                        Toast.makeText(CreateRouteActivity.this, R.string.route_saved, Toast.LENGTH_LONG).show();
+                                        Toasty.success(CreateRouteActivity.this, R.string.route_saved, Toast.LENGTH_LONG).show();
                                         flSaveRoute.setVisibility(View.GONE);
                                     } else {
-                                        Toast.makeText(CreateRouteActivity.this, R.string.route_failed, Toast.LENGTH_SHORT).show();
+                                        Toasty.error(CreateRouteActivity.this, R.string.route_failed, Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });

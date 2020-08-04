@@ -77,6 +77,7 @@ import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import es.dmoral.toasty.Toasty;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -294,7 +295,7 @@ public class CustomRouteActivity extends AppCompatActivity implements OnMapReady
                                 @Override
                                 public void done(ParseException e) {
                                     if (e == null) {
-                                        Toast.makeText(CustomRouteActivity.this, R.string.route_saved, Toast.LENGTH_LONG).show();
+                                        Toasty.success(CustomRouteActivity.this, R.string.route_saved, Toast.LENGTH_LONG).show();
                                         flSaveRoute.setVisibility(View.GONE);
                                     } else {
                                         Toast.makeText(CustomRouteActivity.this, R.string.route_failed, Toast.LENGTH_SHORT).show();
@@ -302,7 +303,7 @@ public class CustomRouteActivity extends AppCompatActivity implements OnMapReady
                                 }
                             });
                         } else {
-                            Toast.makeText(CustomRouteActivity.this, R.string.route_failed, Toast.LENGTH_SHORT).show();
+                            Toasty.error(CustomRouteActivity.this, R.string.route_failed, Toast.LENGTH_SHORT).show();
                             Log.e(TAG,e.toString());
                         }
                     }
