@@ -84,6 +84,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -287,10 +288,11 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                 .retina(true) // Retina 2x image will be returned
                 .geoJson(overlay)
                 .build();
-        Toast.makeText(this, "Loading map", Toast.LENGTH_SHORT).show();
         final Double distance = currentRoute.distance() * 0.000621371;
         final String imageUrl = staticImage.url().toString();
-        tvDistanceText.setText(distance.toString() + " Miles");
+        DecimalFormat df = new DecimalFormat("#.##");
+        String shortDistance = df.format(distance);
+        tvDistanceText.setText(shortDistance +" Miles");
         Glide.with(this)
                 .load(imageUrl)
                 .placeholder(R.drawable.ic_uploading)
@@ -344,7 +346,7 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                                 }
                             });
                         } else {
-                            Toast.makeText(CreateRouteActivity.this, R.string.route_failed, Toast.LENGTH_SHORT).show();
+                            Toasty.error(CreateRouteActivity.this, R.string.route_failed, Toast.LENGTH_SHORT).show();
                             Log.e(TAG,e.toString());
                         }
                     }
@@ -412,7 +414,9 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                     }
                 }
 // Make a toast which displays the route's distance
-                Toast.makeText(CreateRouteActivity.this, (Double.toString(currentRoute.distance()*0.000621371)), Toast.LENGTH_SHORT).show();
+                DecimalFormat df = new DecimalFormat("#.##");
+                String shortDistance = df.format(currentRoute.distance()*0.000621371);
+                Toasty.info(CreateRouteActivity.this, shortDistance + " miles", Toast.LENGTH_SHORT).show();
                 //0.000621371 is conversion from meters to miles
                 if (mapboxMap != null) {
                     mapboxMap.getStyle(new Style.OnStyleLoaded() {
