@@ -1,5 +1,6 @@
 package com.example.newroutes.Fragments;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,9 +13,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.example.newroutes.R;
 import com.example.newroutes.databinding.FragmentRandomTutorialBinding;
 
@@ -28,10 +34,11 @@ public class RandomTutorialFragment extends Fragment {
     private ImageView ivGif;
     private TextView tvInstructions;
     private ImageButton ibClose;
+    private ProgressBar progressBar;
     private int pageNumber = 1;
     private int numPages = 3;
-    private int[] instructions = {R.string.random_page_1,R.string.random_page_2,R.string.random_page_3};
-    private String[] gifs = {"https://i.imgur.com/OeOOh63.gif","https://i.imgur.com/6WKXc6h.gif","https://i.imgur.com/PXmRSoS.gif"};
+    public int[] instructions;
+    public String[] gifs;
     FragmentRandomTutorialBinding binding;
 
     public RandomTutorialFragment() {
@@ -42,6 +49,8 @@ public class RandomTutorialFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        gifs = new String[]{"https://i.imgur.com/OeOOh63.gif", "https://i.imgur.com/6WKXc6h.gif", "https://i.imgur.com/PXmRSoS.gif"};
+        instructions = new int[]{R.string.random_page_1,R.string.random_page_2,R.string.random_page_3};
 
     }
 
@@ -59,6 +68,7 @@ public class RandomTutorialFragment extends Fragment {
         ibLeft = binding.ibLeft;
         ibRight = binding.ibRight;
         ibClose = binding.ibClose;
+        progressBar = binding.progressBar;
         tvInstructions = binding.tvInstructions;
         tvPageCounter = binding.tvPageCounter;
         ivGif = binding.ivGif;
@@ -67,7 +77,8 @@ public class RandomTutorialFragment extends Fragment {
         ibLeft.setVisibility(View.INVISIBLE);
         tvPageCounter.setText(pageNumber + "/" + numPages);
 
-        Glide.with(getContext()).load(gifs[pageNumber-1]).into(ivGif);
+
+        loadImage(gifs[pageNumber-1]);
 
         ibRight.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,7 +90,7 @@ public class RandomTutorialFragment extends Fragment {
                 if (pageNumber == numPages) {
                     ibRight.setVisibility(View.INVISIBLE);
                 }
-                Glide.with(getContext()).load(gifs[pageNumber-1]).into(ivGif);
+                loadImage(gifs[pageNumber-1]);
             }
         });
         ibLeft.setOnClickListener(new View.OnClickListener() {
@@ -87,12 +98,12 @@ public class RandomTutorialFragment extends Fragment {
             public void onClick(View view) {
                 pageNumber--;
                 ibRight.setVisibility(View.VISIBLE);
-                tvInstructions.setText(getString(instructions[pageNumber-1]));
+                tvInstructions.setText(getString(instructions[pageNumber - 1]));
                 tvPageCounter.setText(pageNumber + "/" + numPages);
                 if (pageNumber == 1) {
                     ibLeft.setVisibility(View.INVISIBLE);
                 }
-                Glide.with(getContext()).load(gifs[pageNumber-1]).into(ivGif);
+                loadImage(gifs[pageNumber-1]);
             }
         });
         ibClose.setOnClickListener(new View.OnClickListener() {
@@ -101,6 +112,22 @@ public class RandomTutorialFragment extends Fragment {
                 getActivity().getSupportFragmentManager().beginTransaction().remove(RandomTutorialFragment.this).commit();
             }
         });
+    }
 
+    public void loadImage(String imageUrl) {
+        progressBar.setVisibility(View.VISIBLE);
+        Glide.with(getContext()).load(imageUrl).listener(new RequestListener<Drawable>() {
+            @Override
+            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                progressBar.setVisibility(View.INVISIBLE);
+                return false;
+            }
+
+            @Override
+            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                progressBar.setVisibility(View.INVISIBLE);
+                return false;
+            }
+        }).into(ivGif);
     }
 }

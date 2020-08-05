@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.newroutes.Fragments.CustomTutorialFragment;
 import com.example.newroutes.Fragments.RandomTutorialFragment;
 import com.example.newroutes.ParseObjects.Route;
 import com.example.newroutes.databinding.ActivityCustomRouteBinding;
@@ -85,6 +86,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -101,6 +103,7 @@ public class CustomRouteActivity extends AppCompatActivity implements OnMapReady
     private MapboxMap map;
     private Button btnStart;
     private Button btnSave;
+    private EditText etDescription;
     private Button btnSaveRoute;
     private EditText etRouteName;
     private FrameLayout flInstructions;
@@ -142,6 +145,7 @@ public class CustomRouteActivity extends AppCompatActivity implements OnMapReady
         context = this;
         btnStart = binding.btnStart;
         btnSave = binding.btnSave;
+        etDescription = binding.etDescription;
         btnSaveRoute = binding.btnSaveRoute;
         flSaveRoute = binding.flSaveRoute;
         etRouteName = binding.etRouteName;
@@ -234,7 +238,7 @@ public class CustomRouteActivity extends AppCompatActivity implements OnMapReady
                             }
                         });
 
-                        Fragment fragment = new RandomTutorialFragment();
+                        Fragment fragment = new CustomTutorialFragment();
                         FragmentManager fm = getSupportFragmentManager();
                         fm.beginTransaction().replace(flInstructions.getId(),fragment).commit();
                     }
@@ -260,7 +264,9 @@ public class CustomRouteActivity extends AppCompatActivity implements OnMapReady
                 .build();
         Toast.makeText(this, "Loading map", Toast.LENGTH_SHORT).show();
         final String imageUrl = staticImage.url().toString();
-        tvDistanceText.setText(totalDistance.toString() + " Miles");
+        DecimalFormat df = new DecimalFormat("#.##");
+        String shortDistance = df.format(totalDistance);
+        tvDistanceText.setText(shortDistance +" Miles");
         Glide.with(this)
                 .load(imageUrl)
                 .placeholder(R.drawable.ic_uploading)
@@ -288,6 +294,7 @@ public class CustomRouteActivity extends AppCompatActivity implements OnMapReady
                 final Route route = new Route();
                 route.setDistance(totalDistance);
                 route.setName(etRouteName.getText().toString());
+                route.setDescription(etDescription.getText().toString());
                 if (etRouteName.getText().toString().isEmpty()) {
                     route.setName(getString(R.string.unnamed_route));
                 }

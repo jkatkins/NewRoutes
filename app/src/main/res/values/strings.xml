@@ -26,4 +26,7 @@
     <string name="random_page_1"><![CDATA["Pan & zoom map under pin, then press Choose Origin. "]]></string>
     <string name="random_page_2">Use the distance slider to select a target distance</string>
     <string name="random_page_3">Finish generation, or reset to restart the process.</string>
+    <string name="custom_page_1"><![CDATA[Pan & zoom map under pin, then press Choose Origin.]]></string>
+    <string name="custom_page_2"><![CDATA[Pan & zoom to place waypoints along the map.]]></string>
+    <string name="custom_page_3">After placing your last waypoint, save the route.</string>
 </resources>

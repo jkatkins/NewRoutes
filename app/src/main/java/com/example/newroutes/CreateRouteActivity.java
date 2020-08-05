@@ -103,7 +103,6 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
     private ProgressBar progressBar;
     private EditText etRouteName;
     private EditText etDescription;
-    private RatingBar ratingBar;
     private TextView tvDistanceText; //TODO change these variable names, they are confusing
     private TextView tvDistance;
     private ImageView ivMap;
@@ -156,7 +155,6 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
         tvDistance = binding.tvDistance;
         flInstructions = binding.flInstructions;
         etRouteName = binding.etRouteName;
-        ratingBar = binding.ratingBar;
         etDescription = binding.etDescription;
         ivMap = binding.ivMap;
         tvDistanceText = binding.tvDistanceText;
@@ -327,8 +325,6 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                 route.setLinestring(coordinates);
                 route.setUser(ParseUser.getCurrentUser());
                 route.setDescription(etDescription.getText().toString());
-                Float difficulty = ratingBar.getRating();
-                route.setDifficulty(difficulty);
                 route.saveInBackground(new SaveCallback() {
                     @Override
                     public void done(ParseException e) {
