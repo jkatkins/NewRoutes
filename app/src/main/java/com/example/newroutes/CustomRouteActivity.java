@@ -222,7 +222,9 @@ public class CustomRouteActivity extends AppCompatActivity implements OnMapReady
                                 LatLng targetLatLng = map.getCameraPosition().target;
                                 lastLocation = dropPin(targetLatLng);
                                 totalDistance += currentRoute.distance() * 0.000621371;
-                                Toast.makeText(context, "Current distance: " + totalDistance, Toast.LENGTH_SHORT).show();
+                                DecimalFormat df = new DecimalFormat("#.##");
+                                String shortDistance = df.format(totalDistance);
+                                Toasty.info(context, "Current distance: " + shortDistance + " miles", Toast.LENGTH_SHORT).show();
                                 if (buildingGeoJson == null) {
                                     buildingGeoJson = routeGeoJson;
                                 } else {
@@ -238,9 +240,13 @@ public class CustomRouteActivity extends AppCompatActivity implements OnMapReady
                             }
                         });
 
-                        Fragment fragment = new CustomTutorialFragment();
-                        FragmentManager fm = getSupportFragmentManager();
-                        fm.beginTransaction().replace(flInstructions.getId(),fragment).commit();
+                        if (ParseUser.getCurrentUser().getBoolean("CustomTutorial") == false) {
+                            Fragment fragment = new CustomTutorialFragment();
+                            FragmentManager fm = getSupportFragmentManager();
+                            fm.beginTransaction().replace(flInstructions.getId(),fragment).commit();
+                            ParseUser.getCurrentUser().put("CustomTutorial",true);
+                            ParseUser.getCurrentUser().saveInBackground();
+                        }
                     }
                 });
     }

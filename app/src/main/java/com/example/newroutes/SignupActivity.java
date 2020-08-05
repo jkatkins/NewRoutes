@@ -78,6 +78,7 @@ public class SignupActivity extends AppCompatActivity {
                                     Intent i = new Intent(SignupActivity.this,MainActivity.class);
                                     i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                     startActivity(i);
+                                    finish();
                                 } else {
                                     Toasty.error(SignupActivity.this, "Error signing up, " + e, Toast.LENGTH_SHORT).show();
                                 }

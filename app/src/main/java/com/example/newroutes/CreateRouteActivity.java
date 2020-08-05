@@ -252,10 +252,13 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                         });
                     }
                 });
-
-        Fragment fragment = new RandomTutorialFragment();
-        FragmentManager fm = getSupportFragmentManager();
-        fm.beginTransaction().replace(flInstructions.getId(),fragment).commit();
+        if (ParseUser.getCurrentUser().getBoolean("RandomTutorial") == false) {
+            Fragment fragment = new RandomTutorialFragment();
+            FragmentManager fm = getSupportFragmentManager();
+            fm.beginTransaction().replace(flInstructions.getId(),fragment).commit();
+            ParseUser.getCurrentUser().put("RandomTutorial",true);
+            ParseUser.getCurrentUser().saveInBackground();
+        }
     }
 
     private void initLayers(@NonNull Style loadedMapStyle) {
