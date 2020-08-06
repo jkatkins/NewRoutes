@@ -40,7 +40,7 @@ public class HomeFriendRequestsFragment extends Fragment {
     private FriendRequestsAdapter adapter;
     public ArrayList<ParseUser> friendRequests;
     private ProgressBar progressBar;
-    private BadgeDrawable badgeDrawable;
+    public BadgeDrawable badgeDrawable;
     private SwipeRefreshLayout swipeContainer;
     private TabLayout tlTabs;
     FragmentHomeFriendRequestsBinding binding;
@@ -77,21 +77,12 @@ public class HomeFriendRequestsFragment extends Fragment {
         adapter = new FriendRequestsAdapter(friendRequests,getContext());
         rvFriendRequests.setAdapter(adapter);
         rvFriendRequests.setLayoutManager(new LinearLayoutManager(getContext()));
-        try {
-            progressBar.setVisibility(View.VISIBLE);
-            queryRequests();
-        } catch (ParseException e) {
-            e.printStackTrace();
-            progressBar.setVisibility(View.GONE);
-        }
+        progressBar.setVisibility(View.VISIBLE);
+        queryRequests();
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                try {
-                    queryRequests();
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+                queryRequests();
             }
         });
     }
@@ -105,7 +96,7 @@ public class HomeFriendRequestsFragment extends Fragment {
         }
     }
 
-    private void queryRequests() throws ParseException {
+    public void queryRequests() {
         Log.i(TAG,"query requests");
         ((FriendsManager)ParseUser.getCurrentUser().get("FriendsManager")).fetchInBackground(new GetCallback<ParseObject>() {
             @Override
@@ -130,7 +121,7 @@ public class HomeFriendRequestsFragment extends Fragment {
                         } else {
                             Log.e(TAG,e.toString());
                         }
-                        badgeDrawable = tlTabs.getTabAt(2).getOrCreateBadge();
+                        badgeDrawable = tlTabs.getTabAt(1).getOrCreateBadge();
                         badgeDrawable.setNumber(friendRequests.size());
                         badgeDrawable.setVisible(true);
                     }

@@ -18,6 +18,7 @@ import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.badge.BadgeUtils;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.parse.ParseException;
 
 import java.util.ArrayList;
 
@@ -70,9 +71,9 @@ public class HomeFragment extends Fragment {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getChildFragmentManager(),0);
         vpPager.setAdapter(adapter);
         adapter.addFragment(homeRoutesFragment,"My Routes");
-        adapter.addFragment(homeFavoritesFragment,"Favorite Routes");
         adapter.addFragment(homeFriendRequestsFragment,"Friend Requests");
         adapter.addFragment(homeFriendsFragment,"Friends");
+        adapter.addFragment(homeFavoritesFragment,"Favorite Routes");
 
     }
 

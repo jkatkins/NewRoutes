@@ -103,7 +103,8 @@ public class RoutesFragment extends Fragment implements RouteInterface {
     protected void queryRoutes() {
         ParseQuery<Route> query = ParseQuery.getQuery(Route.class);
         query.include(Route.KEY_USER);
-        query.setLimit(20);
+        query.setLimit(100);
+        query.addDescendingOrder(Route.KEY_CREATED_AT);
         query.findInBackground(new FindCallback<Route>() {
             @Override
             public void done(List<Route> newRoutes, ParseException e) {

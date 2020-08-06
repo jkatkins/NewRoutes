@@ -122,6 +122,7 @@ public class CustomRouteActivity extends AppCompatActivity implements OnMapReady
     private FrameLayout flSaveRoute;
     private Symbol lastLocation;
     private LatLng lastGenerated;
+    private ArrayList<LineString> routeSegments;
     private boolean isActive = false;
     private ArrayList<Symbol> symbols = new ArrayList<>();
     private static final String DROPPED_MARKER_LAYER_ID = "DROPPED_MARKER_LAYER_ID";
