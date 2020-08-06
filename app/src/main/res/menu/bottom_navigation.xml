@@ -23,7 +23,7 @@
     <item
         android:id="@+id/item_friends"
         android:icon="@drawable/ic_friends"
-        android:title="Friends"
+        android:title="Social"
         app:showAsAction="always" />
     <item
         android:id="@+id/item_profile"
