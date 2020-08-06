@@ -317,7 +317,7 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
             @Override
             public void onClick(View view) {
                 //save route here
-
+                btnSaveFinal.setClickable(false);
                 final Route route = new Route();
                 route.setDistance(distance);
                 route.setName(etRouteName.getText().toString());
@@ -336,6 +336,7 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                             ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
                                 @Override
                                 public void done(ParseException e) {
+                                    btnSaveFinal.setClickable(true);
                                     if (e == null) {
                                         Toasty.success(CreateRouteActivity.this, R.string.route_saved, Toast.LENGTH_LONG).show();
                                         flSaveRoute.setVisibility(View.GONE);
@@ -345,6 +346,7 @@ public class CreateRouteActivity extends AppCompatActivity implements OnMapReady
                                 }
                             });
                         } else {
+                            btnSaveFinal.setClickable(true);
                             Toasty.error(CreateRouteActivity.this, R.string.route_failed, Toast.LENGTH_SHORT).show();
                             Log.e(TAG,e.toString());
                         }
